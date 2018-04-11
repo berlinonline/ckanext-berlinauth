@@ -27,6 +27,7 @@ def site_read(context, data_dict=None):
   return ckanget.site_read(context, data_dict)
 
 # xyz_list functions:
+# egrep "def ([a-z_]+?_list(_[a-z_]+?)?)\(" ckan/logic/auth/get.py | sort | uniq
 
 def group_revision_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.group_revision_list
@@ -35,6 +36,7 @@ def group_revision_list(context, data_dict):
   - all others: standard behaviour
   """
   return ckanget.group_revision_list(context, data_dict)
+
 
 def member_roles_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.member_roles_list
@@ -62,6 +64,7 @@ def organization_list_for_user(context, data_dict):
   """
   return ckanget.organization_list_for_user(context, data_dict)
 
+
 def organization_revision_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.organization_revision_list
 
@@ -88,6 +91,7 @@ def revision_list(context, data_dict):
   """
   return ckanget.revision_list(context, data_dict)
 
+
 def user_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.user_list
 
@@ -95,6 +99,7 @@ def user_list(context, data_dict):
   - all others: standard behaviour
   """
   return ckanget.user_list(context, data_dict)
+
 
 def vocabulary_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.vocabulary_list
@@ -104,71 +109,166 @@ def vocabulary_list(context, data_dict):
   """
   return ckanget.vocabulary_list(context, data_dict)
 
-# def _followee_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
 
-# def config_option_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
+# xyz_show functions:
+# egrep "def ([a-z_]+?_show(_[a-z_]+?)?)\(" ckan/logic/auth/get.py | sort | uniq
 
-# def current_package_list_with_resources(context, data_dict):
-# same as package_list
+def group_show(context, data_dict):
+  """Implementation of ckan.logic.auth.get.group_show
 
-# def dashboard_activity_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
-
-# def dataset_followee_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
-
-# def dataset_follower_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
-
-# def followee_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
-
-# def group_followee_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
-
-# def group_follower_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
-
-# def group_list(context, data_dict):
-# should be allowed for anonymous
-
-# def group_list_authz(context, data_dict):
-# same as group_list
-
-# def group_list_available(context, data_dict):
-# same as group_list
-
-# def job_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
-
-# def license_list(context, data_dict):
-# should be allowed for anonymous
-
-# def organization_followee_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
-
-# def organization_follower_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
-
-# def package_list(context, data_dict):
-# should be allowed for anonymous
-
-# def package_relationships_list(context, data_dict):
-# standard behaviour allows if both is_authorized('package_show')
-# is true for both packages
-
-# def resource_view_list(context, data_dict):
-# should be allowed for anonymous
-
-# def tag_list(context, data_dict):
-# should be allowed for anonymous
-
-# def user_followee_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
-
-# def user_follower_list(context, data_dict):
-# not allowed for anonymous in standard CKAN
+  - anonymous: disallow
+  - all others: standard behaviour
+  """
+  return ckanget.group_show(context, data_dict)
 
 
+def resource_status_show(context, data_dict):
+  """Implementation of ckan.logic.auth.get.resource_status_show
+
+  - anonymous: disallow
+  - all others: standard behaviour
+  """
+  return ckanget.resource_status_show(context, data_dict)
+
+
+def revision_show(context, data_dict):
+  """Implementation of ckan.logic.auth.get.revision_show
+
+  - anonymous: disallow
+  - all others: standard behaviour
+  """
+  return ckanget.revision_show(context, data_dict)
+
+
+def task_status_show(context, data_dict):
+  """Implementation of ckan.logic.auth.get.task_status_show
+
+  - anonymous: disallow
+  - all others: standard behaviour
+  """
+  return ckanget.task_status_show(context, data_dict)
+
+
+def user_show(context, data_dict):
+  """Implementation of ckan.logic.auth.get.user_show
+
+  - anonymous: disallow
+  - all others: standard behaviour
+  """
+  return ckanget.user_show(context, data_dict)
+
+
+def vocabulary_show(context, data_dict):
+  """Implementation of ckan.logic.auth.get.vocabulary_show
+
+  - anonymous: disallow
+  - all others: standard behaviour
+  """
+  return ckanget.vocabulary_show(context, data_dict)
+
+
+# Methods in ckan.logic.auth.get not implemented here
+# (and why):
+
+    # def _followee_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def config_option_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def current_package_list_with_resources(context, data_dict):
+    # same as package_list
+
+    # def dashboard_activity_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def dataset_followee_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def dataset_follower_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def followee_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def group_followee_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def group_follower_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def group_list(context, data_dict):
+    # should be allowed for anonymous
+
+    # def group_list_authz(context, data_dict):
+    # same as group_list
+
+    # def group_list_available(context, data_dict):
+    # same as group_list
+
+    # def job_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def license_list(context, data_dict):
+    # should be allowed for anonymous
+
+    # def organization_followee_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def organization_follower_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def package_list(context, data_dict):
+    # should be allowed for anonymous
+
+    # def package_relationships_list(context, data_dict):
+    # standard behaviour allows if both is_authorized('package_show')
+    # is true for both packages
+
+    # def resource_view_list(context, data_dict):
+    # should be allowed for anonymous
+
+    # def tag_list(context, data_dict):
+    # should be allowed for anonymous
+
+    # def user_followee_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def user_follower_list(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def config_option_show(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def group_show_rest(context, data_dict):
+    # same as group_show
+
+    # def help_show(context, data_dict):
+    # should be allowed for anonymous
+
+    # def job_show(context, data_dict):
+    # not allowed for anonymous in standard CKAN
+
+    # def organization_show(context, data_dict):
+    # same as group_show
+
+    # def package_show(context, data_dict):
+    # should be allowed for anonymous
+
+    # def package_show_rest(context, data_dict):
+    # should be allowed for anonymous
+
+    # def resource_show(context, data_dict):
+    # should be allowed for anonymous
+
+    # def resource_view_show(context, data_dict):
+    # should be allowed for anonymous
+
+    # def tag_show(context, data_dict):
+    # should be allowed for anonymous
+
+    # def tag_show_rest(context, data_dict):
+    # should be allowed for anonymous
+
+    # def package_search(context, data_dict):
+    # should be allowed for anonymous

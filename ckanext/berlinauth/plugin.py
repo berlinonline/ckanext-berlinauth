@@ -32,6 +32,7 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
 
   def get_auth_functions(self):
     return {
+      # get
       'site_read': auth_get.site_read ,
       'group_revision_list': auth_get.group_revision_list ,
       'member_roles_list': auth_get.member_roles_list ,
@@ -42,6 +43,12 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
       'revision_list': auth_get.revision_list ,
       'user_list': auth_get.user_list ,
       'vocabulary_list': auth_get.vocabulary_list ,
+      'group_show': auth_get.group_show ,
+      'resource_status_show': auth_get.resource_status_show ,
+      'revision_show': auth_get.revision_show ,
+      'task_status_show': auth_get.task_status_show ,
+      'user_show': auth_get.user_show ,
+      'vocabulary_show': auth_get.vocabulary_show ,
     }
 
 
