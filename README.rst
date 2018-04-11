@@ -32,7 +32,26 @@
 ckanext-berlinauth
 ==================
 
-Implements CKAN's IAuthFunctions, replaces all auth methods.
+Implements IAuthFunctions to achieve the authorization model for the CKAN
+installation for "Offen Daten Berlin".
+
+-------------
+Register-mode
+-------------
+
+"Register-mode" is the implementation for the use case where we have CKAN
+as a separate "backend" system, only accessible to administrative staff who 
+add and manage datasets. In this scenario, CKAN is called the "Datenregister".
+
+The general authorization model is as follows:
+
+- no anonymous access to the website (https://datenregister.berlin.de)
+- anonymous access to a subset of the API
+- restricted access for logged-in users (administrative staff and select others)
+  - no user list/show
+  - no vocabulary list/show
+  - ... 
+
 
 ------------
 Requirements
