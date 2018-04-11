@@ -48,6 +48,7 @@ The general authorization model is as follows:
 - no anonymous access to the website (https://datenregister.berlin.de)
 - anonymous access to a subset of the API
 - restricted access for logged-in users (administrative staff and select others)
+
   - no user list/show
   - no vocabulary list/show
   - ... 
