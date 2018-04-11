@@ -27,7 +27,7 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
     config['ckan.auth.roles_that_cascade_to_sub_groups'] = 'admin'
 
   # -------------------------------------------------------------------
-  # Implementation IAuth
+  # Implementation IAuthFunctions
   # -------------------------------------------------------------------
 
   def get_auth_functions(self):
