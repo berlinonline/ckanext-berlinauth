@@ -114,6 +114,8 @@ def vocabulary_list(context, data_dict):
 # xyz_show functions:
 # egrep "def ([a-z_]+?_show(_[a-z_]+?)?)\(" ckan/logic/auth/get.py | sort | uniq
 
+# TODO: group_show result includes user objects, even though user_show is 
+# only allowed for sysadmins 
 def group_show(context, data_dict):
   """Implementation of ckan.logic.auth.get.group_show
 
@@ -149,19 +151,17 @@ def revision_show(context, data_dict):
 def task_status_show(context, data_dict):
   """Implementation of ckan.logic.auth.get.task_status_show
 
-  - anonymous: disallow
-  - all others: standard behaviour
+  - everyone: disallow
   """
-  return ckanget.task_status_show(context, data_dict)
+  return { 'success': False, 'msg': 'You are not authorized to perform the task_status_show action.'}
 
 
 def user_show(context, data_dict):
   """Implementation of ckan.logic.auth.get.user_show
 
-  - anonymous: disallow
-  - all others: standard behaviour
+  - everyone: disallow
   """
-  return ckanget.user_show(context, data_dict)
+  return { 'success': False, 'msg': 'You are not authorized to perform the user_show action.'}
 
 
 def vocabulary_show(context, data_dict):

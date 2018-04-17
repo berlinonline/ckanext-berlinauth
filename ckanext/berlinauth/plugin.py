@@ -2,6 +2,7 @@
 
 import ckan.plugins as plugins
 import ckanext.berlinauth.auth.get as auth_get
+import ckanext.berlinauth.auth.create as auth_create
 
 class BerlinauthPlugin(plugins.SingletonPlugin):
   plugins.implements(plugins.IConfigurer, inherit=False)
@@ -51,11 +52,10 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
       'task_status_show': auth_get.task_status_show ,
       'user_show': auth_get.user_show ,
       'vocabulary_show': auth_get.vocabulary_show ,
+
+      # create
+      'rating_create': auth_create.rating_create ,
+      'user_create': auth_create.user_create ,
     }
-
-
-# TODO:
-# - _list and _show for logged_in users
-# - blacklist/whitelist organizations
 
 
