@@ -159,9 +159,31 @@ def task_status_show(context, data_dict):
 def user_show(context, data_dict):
   """Implementation of ckan.logic.auth.get.user_show
 
-  - everyone: disallow
+  - everyone: only allow to see self
+  - sysadmin: can see everyone
   """
-  return { 'success': False, 'msg': 'You are not authorized to perform the user_show action.'}
+  model = context['model']
+
+  id = data_dict.get('id', None)
+  provided_user = data_dict.get('user_obj', None)
+  if id:
+    user_obj = model.User.get(id)
+  elif provided_user:
+    user_obj = provided_user
+  else:
+    raise NotFound
+  
+  requester = context.get('user', None)
+  sysadmin = False
+  if requester:
+    sysadmin = authz.is_sysadmin(requester)
+    requester_looking_at_own_account = requester == user_obj.name
+    if (sysadmin or requester_looking_at_own_account):
+      return { 'success': True }
+    else:
+      return { 'success': False , 'msg': 'You are only authorized to see your own user details.' }
+  else:
+    return { 'success': False , 'msg': 'You are only authorized to see your own user details.' }
 
 
 def vocabulary_show(context, data_dict):
