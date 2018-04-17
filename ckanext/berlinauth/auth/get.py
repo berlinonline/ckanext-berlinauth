@@ -4,6 +4,8 @@ import logging
 import ckan.plugins as plugins
 import ckan.logic.auth.get as ckanget
 import ckan.common as c
+import ckan.authz as authz
+from ckan.model.group import Group
 
 log = logging.getLogger(__name__)
 
@@ -18,13 +20,17 @@ def site_read(context, data_dict=None):
   everyone else:
   - fall back to default behaviour of ckan.logic.auth.get.site_read
   """
+  log.debug(" site_read")
   path = c.request.path
-  log.debug(context.get('auth_user_obj'))
-  if not path.startswith("/api"):
-    return {'success': False, 'msg': 'Site access requires an authenticated user.'}
+  if authz.auth_is_anon_user(context):
+    log.debug(" user is anonymous")
+    if not path.startswith("/api"):
+      return {'success': False, 'msg': 'Site access requires an authenticated user.'}
+    else:
+      return {'success': True}
   else:
-    return {'success': True}
-  return ckanget.site_read(context, data_dict)
+    log.debug(" user is logged_in")
+    return ckanget.site_read(context, data_dict)
 
 # xyz_list functions:
 # egrep "def ([a-z_]+?_list(_[a-z_]+?)?)\(" ckan/logic/auth/get.py | sort | uniq
@@ -33,18 +39,18 @@ def group_revision_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.group_revision_list
 
   - anonymous: disallow
-  - all others: standard behaviour
+  - logged_in: disallow
   """
-  return ckanget.group_revision_list(context, data_dict)
+  return { 'success': False, 'msg': 'You are not authorized to perform the group_revision_list action.'}
 
 
 def member_roles_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.member_roles_list
 
   - anonymous: disallow
-  - all others: standard behaviour
+  - logged_in: disallow
   """
-  return ckanget.member_roles_list(context, data_dict)
+  return { 'success': False, 'msg': 'You are not authorized to perform the member_roles_list action.'}
 
 
 def organization_list(context, data_dict):
@@ -117,9 +123,16 @@ def group_show(context, data_dict):
   """Implementation of ckan.logic.auth.get.group_show
 
   - anonymous: disallow
-  - all others: standard behaviour
+  - logged_in: show only groups that are not listed in the
+    berlin.technical_groups config
   """
-  return ckanget.group_show(context, data_dict)
+  technical_groups = c.config.get("berlin.technical_groups", "")
+  technical_groups = technical_groups.split(" ")
+  group = Group.get(data_dict['id'])
+  if (group.name in technical_groups):
+    return { 'success': False }
+  else:
+    return { 'success': True }
 
 
 def resource_status_show(context, data_dict):

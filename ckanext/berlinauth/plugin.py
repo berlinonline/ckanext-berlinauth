@@ -26,6 +26,8 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
     config['ckan.auth.create_user_via_web'] = False
     config['ckan.auth.roles_that_cascade_to_sub_groups'] = 'admin'
 
+    config['berlin.technical_groups'] = "simplesearch harvester-fis-broker harvester-stromnetz-berlin"
+
   # -------------------------------------------------------------------
   # Implementation IAuthFunctions
   # -------------------------------------------------------------------
@@ -53,7 +55,6 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
 
 
 # TODO:
-# - _show functions for anonymous
 # - _list and _show for logged_in users
 # - blacklist/whitelist organizations
 

@@ -53,6 +53,19 @@ The general authorization model is as follows:
   - no vocabulary list/show
   - ... 
 
+--------------------------------
+Additional Configuration Options
+--------------------------------
+
+- ``berlin.technical_groups``: A space-separated list of group/organizations
+  that are considered 'technical'. A technical organization is one which does
+  not reflect a real-world organization, but has only been introduced to structure
+  permissions.
+
+.. code::
+
+    berlin.technical_groups = simplesearch harvester-fis-broker harvester-stromnetz-berlin
+  
 
 ------------
 Requirements
