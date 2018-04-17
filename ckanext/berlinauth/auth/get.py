@@ -38,8 +38,7 @@ def site_read(context, data_dict=None):
 def group_revision_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.group_revision_list
 
-  - anonymous: disallow
-  - logged_in: disallow
+  - everyone: disallow (revisions can only be seen by sysadmin)
   """
   return { 'success': False, 'msg': 'You are not authorized to perform the group_revision_list action.'}
 
@@ -47,8 +46,7 @@ def group_revision_list(context, data_dict):
 def member_roles_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.member_roles_list
 
-  - anonymous: disallow
-  - logged_in: disallow
+  - everyone: disallow
   """
   return { 'success': False, 'msg': 'You are not authorized to perform the member_roles_list action.'}
 
@@ -57,7 +55,8 @@ def organization_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.organization_list
 
   - anonymous: disallow
-  - all others: standard behaviour
+  - logged_in: show only those organizations for which group_show is true
+    (implemented via CKAN Core)
   """
   return ckanget.organization_list(context, data_dict)
 
@@ -74,37 +73,33 @@ def organization_list_for_user(context, data_dict):
 def organization_revision_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.organization_revision_list
 
-  - anonymous: disallow
-  - all others: standard behaviour
+  - everyone: disallow (revisions can only be seen by sysadmin)
   """
-  return ckanget.organization_revision_list(context, data_dict)
+  return { 'success': False, 'msg': 'You are not authorized to perform the organization_revision_list action.'}
 
 
 def package_revision_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.package_revision_list
 
-  - anonymous: disallow
-  - all others: standard behaviour
+  - everyone: disallow
   """
-  return ckanget.package_revision_list(context, data_dict)
+  return { 'success': False, 'msg': 'You are not authorized to perform the package_revision_list action.'}
 
 
 def revision_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.revision_list
 
-  - anonymous: disallow
-  - all others: standard behaviour
+  - everyone: disallow (revisions can only be seen by sysadmin)
   """
-  return ckanget.revision_list(context, data_dict)
+  return { 'success': False, 'msg': 'You are not authorized to perform the revision_list action.'}
 
 
 def user_list(context, data_dict):
   """Implementation of ckan.logic.auth.get.user_list
 
-  - anonymous: disallow
-  - all others: standard behaviour
+  - everyone: disallow
   """
-  return ckanget.user_list(context, data_dict)
+  return { 'success': False, 'msg': 'You are not authorized to perform the user_list action.'}
 
 
 def vocabulary_list(context, data_dict):
@@ -138,19 +133,17 @@ def group_show(context, data_dict):
 def resource_status_show(context, data_dict):
   """Implementation of ckan.logic.auth.get.resource_status_show
 
-  - anonymous: disallow
-  - all others: standard behaviour
+    - everyone: disallow (method is deprecated)
   """
-  return ckanget.resource_status_show(context, data_dict)
+  return { 'success': False , 'msg': 'resource_status_show is deprecated'}
 
 
 def revision_show(context, data_dict):
   """Implementation of ckan.logic.auth.get.revision_show
 
-  - anonymous: disallow
-  - all others: standard behaviour
+  - everyone: disallow (revisions can only be seen by sysadmin)
   """
-  return ckanget.revision_show(context, data_dict)
+  return { 'success': False, 'msg': 'You are not authorized to perform the revision_show action.'}
 
 
 def task_status_show(context, data_dict):
