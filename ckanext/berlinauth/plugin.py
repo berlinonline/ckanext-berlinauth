@@ -48,7 +48,7 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
     def get_auth_functions(self):
         """Implementation of IAuthFunctions.get_auth_functions()
 
-        Auth functions that are provided by this plugin.
+        Authorization functions that are provided by this plugin.
         """
         return {
             # get
@@ -72,6 +72,10 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
             # create
             'rating_create': auth_create.rating_create ,
             'user_create': auth_create.user_create ,
+
+            # update, path, delete: nothing to do, this
+            # is all fine in standard CKAN / covered by
+            # ckan.auth settings
         }
 
     # -------------------------------------------------------------------
