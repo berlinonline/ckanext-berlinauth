@@ -20,16 +20,13 @@ def site_read(context, data_dict=None):
   everyone else:
   - fall back to default behaviour of ckan.logic.auth.get.site_read
   """
-  log.debug(" site_read")
   path = c.request.path
   if authz.auth_is_anon_user(context):
-    log.debug(" user is anonymous")
     if not path.startswith("/api"):
       return {'success': False, 'msg': 'Site access requires an authenticated user.'}
     else:
       return {'success': True}
   else:
-    log.debug(" user is logged_in")
     return ckanget.site_read(context, data_dict)
 
 # xyz_list functions:
