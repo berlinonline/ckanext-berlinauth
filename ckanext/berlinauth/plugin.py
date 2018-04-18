@@ -3,10 +3,12 @@
 import ckan.plugins as plugins
 import ckanext.berlinauth.auth.get as auth_get
 import ckanext.berlinauth.auth.create as auth_create
+import ckanext.berlinauth.action.get as action_get
 
 class BerlinauthPlugin(plugins.SingletonPlugin):
   plugins.implements(plugins.IConfigurer, inherit=False)
   plugins.implements(plugins.IAuthFunctions)
+  plugins.implements(plugins.IActions)
   
   # -------------------------------------------------------------------
   # Implementation IConfigurer
@@ -58,4 +60,12 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
       'user_create': auth_create.user_create ,
     }
 
+  # -------------------------------------------------------------------
+  # Implementation IActions
+  # -------------------------------------------------------------------
+
+  def get_actions(self):
+    return {
+      'organization_list': action_get.organization_list ,
+    }
 
