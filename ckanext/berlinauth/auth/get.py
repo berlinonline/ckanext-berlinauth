@@ -1,195 +1,223 @@
 # encoding: utf-8
+"""Custom implementations of auth functions from ckan.logic.auth.get
+"""
 
 import logging
 import ckan.plugins as plugins
 import ckan.logic.auth.get as ckanget
 import ckan.common as c
 import ckan.authz as authz
+import ckan.logic as logic
 from ckan.model.group import Group
 
 log = logging.getLogger(__name__)
 
 @plugins.toolkit.auth_allow_anonymous_access
 def site_read(context, data_dict=None):
-  """Implementation of ckan.logic.auth.get.site_read
+    """Implementation of ckan.logic.auth.get.site_read
 
-  anonymous:
-  - allow api calls (path starts with "/api")
-  - disallow everything else
+    anonymous:
+    - allow api calls (path starts with "/api")
+    - disallow everything else
 
-  everyone else:
-  - fall back to default behaviour of ckan.logic.auth.get.site_read
-  """
-  path = c.request.path
-  if authz.auth_is_anon_user(context):
-    if not path.startswith("/api"):
-      return {'success': False, 'msg': 'Site access requires an authenticated user.'}
+    everyone else:
+    - fall back to default behaviour of ckan.logic.auth.get.site_read
+    """
+    path = c.request.path
+    if authz.auth_is_anon_user(context):
+        if not path.startswith("/api"):
+            return {'success': False, 'msg': 'Site access requires an authenticated user.'}
+        else:
+            return {'success': True}
     else:
-      return {'success': True}
-  else:
-    return ckanget.site_read(context, data_dict)
+        return ckanget.site_read(context, data_dict)
 
 # xyz_list functions:
 # egrep "def ([a-z_]+?_list(_[a-z_]+?)?)\(" ckan/logic/auth/get.py | sort | uniq
 
 def group_revision_list(context, data_dict):
-  """Implementation of ckan.logic.auth.get.group_revision_list
+    """Implementation of ckan.logic.auth.get.group_revision_list
 
-  - everyone: disallow (revisions can only be seen by sysadmin)
-  """
-  return { 'success': False, 'msg': 'You are not authorized to perform the group_revision_list action.'}
+    - everyone: disallow (revisions can only be seen by sysadmin)
+    """
+    return {
+        'success': False,
+        'msg': 'You are not authorized to perform the group_revision_list action.'
+    }
 
 
 def member_roles_list(context, data_dict):
-  """Implementation of ckan.logic.auth.get.member_roles_list
+    """Implementation of ckan.logic.auth.get.member_roles_list
 
-  - everyone: disallow
-  """
-  return { 'success': False, 'msg': 'You are not authorized to perform the member_roles_list action.'}
+    - everyone: disallow
+    """
+    return {
+        'success': False,
+        'msg': 'You are not authorized to perform the member_roles_list action.'
+    }
 
 
 def organization_list(context, data_dict):
-  """Implementation of ckan.logic.auth.get.organization_list
+    """Implementation of ckan.logic.auth.get.organization_list
 
-  - anonymous: disallow
-  - logged_in: show only those organizations for which group_show is true
-    (implemented via CKAN Core)
-  """
-  return ckanget.organization_list(context, data_dict)
+    - anonymous: disallow
+    - logged_in: show only those organizations for which group_show is true
+      (implemented via CKAN Core)
+    """
+    return ckanget.organization_list(context, data_dict)
 
 
 def organization_list_for_user(context, data_dict):
-  """Implementation of ckan.logic.auth.get.organization_list_for_user
+    """Implementation of ckan.logic.auth.get.organization_list_for_user
 
-  - anonymous: disallow
-  - all others: standard behaviour
-  """
-  return ckanget.organization_list_for_user(context, data_dict)
+    - anonymous: disallow
+    - all others: standard behaviour
+    """
+    return ckanget.organization_list_for_user(context, data_dict)
 
 
 def organization_revision_list(context, data_dict):
-  """Implementation of ckan.logic.auth.get.organization_revision_list
+    """Implementation of ckan.logic.auth.get.organization_revision_list
 
-  - everyone: disallow (revisions can only be seen by sysadmin)
-  """
-  return { 'success': False, 'msg': 'You are not authorized to perform the organization_revision_list action.'}
+    - everyone: disallow (revisions can only be seen by sysadmin)
+    """
+    return {
+        'success': False,
+        'msg': 'You are not authorized to perform the organization_revision_list action.'
+    }
 
 
 def package_revision_list(context, data_dict):
-  """Implementation of ckan.logic.auth.get.package_revision_list
+    """Implementation of ckan.logic.auth.get.package_revision_list
 
-  - everyone: disallow
-  """
-  return { 'success': False, 'msg': 'You are not authorized to perform the package_revision_list action.'}
+    - everyone: disallow
+    """
+    return {
+        'success': False,
+        'msg': 'You are not authorized to perform the package_revision_list action.'
+    }
 
 
 def revision_list(context, data_dict):
-  """Implementation of ckan.logic.auth.get.revision_list
+    """Implementation of ckan.logic.auth.get.revision_list
 
-  - everyone: disallow (revisions can only be seen by sysadmin)
-  """
-  return { 'success': False, 'msg': 'You are not authorized to perform the revision_list action.'}
+    - everyone: disallow (revisions can only be seen by sysadmin)
+    """
+    return {
+        'success': False,
+        'msg': 'You are not authorized to perform the revision_list action.'
+    }
 
 
 def user_list(context, data_dict):
-  """Implementation of ckan.logic.auth.get.user_list
+    """Implementation of ckan.logic.auth.get.user_list
 
-  - everyone: disallow
-  """
-  return { 'success': False, 'msg': 'You are not authorized to perform the user_list action.'}
+    - everyone: disallow
+    """
+    return {
+        'success': False,
+        'msg': 'You are not authorized to perform the user_list action.'
+    }
 
 
 def vocabulary_list(context, data_dict):
-  """Implementation of ckan.logic.auth.get.vocabulary_list
+    """Implementation of ckan.logic.auth.get.vocabulary_list
 
-  - anonymous: disallow
-  - all others: standard behaviour
-  """
-  return ckanget.vocabulary_list(context, data_dict)
+    - anonymous: disallow
+    - all others: standard behaviour
+    """
+    return ckanget.vocabulary_list(context, data_dict)
 
 
 # xyz_show functions:
 # egrep "def ([a-z_]+?_show(_[a-z_]+?)?)\(" ckan/logic/auth/get.py | sort | uniq
 
-# TODO: group_show result includes user objects, even though user_show is 
-# only allowed for sysadmins 
 def group_show(context, data_dict):
-  """Implementation of ckan.logic.auth.get.group_show
+    """Implementation of ckan.logic.auth.get.group_show
 
-  - anonymous: disallow
-  - logged_in: show only groups that are not listed in the
-    berlin.technical_groups config
-  """
-  technical_groups = c.config.get("berlin.technical_groups", "")
-  technical_groups = technical_groups.split(" ")
-  group = Group.get(data_dict['id'])
-  if (group.name in technical_groups):
-    return { 'success': False }
-  else:
-    return { 'success': True }
+    - anonymous: disallow
+    - logged_in: show only groups that are not listed in the
+      berlin.technical_groups config
+    """
+    technical_groups = c.config.get("berlin.technical_groups", "")
+    technical_groups = technical_groups.split(" ")
+    group = Group.get(data_dict['id'])
+    if group.name in technical_groups:
+        return { 'success': False }
+    else:
+        return { 'success': True }
 
 
 def resource_status_show(context, data_dict):
-  """Implementation of ckan.logic.auth.get.resource_status_show
+    """Implementation of ckan.logic.auth.get.resource_status_show
 
-    - everyone: disallow (method is deprecated)
-  """
-  return { 'success': False , 'msg': 'resource_status_show is deprecated'}
+      - everyone: disallow (method is deprecated)
+    """
+    return { 'success': False , 'msg': 'resource_status_show is deprecated'}
 
 
 def revision_show(context, data_dict):
-  """Implementation of ckan.logic.auth.get.revision_show
+    """Implementation of ckan.logic.auth.get.revision_show
 
-  - everyone: disallow (revisions can only be seen by sysadmin)
-  """
-  return { 'success': False, 'msg': 'You are not authorized to perform the revision_show action.'}
+    - everyone: disallow (revisions can only be seen by sysadmin)
+    """
+    return { 'success': False, 'msg': 'You are not authorized to perform the revision_show action.'}
 
 
 def task_status_show(context, data_dict):
-  """Implementation of ckan.logic.auth.get.task_status_show
+    """Implementation of ckan.logic.auth.get.task_status_show
 
-  - everyone: disallow
-  """
-  return { 'success': False, 'msg': 'You are not authorized to perform the task_status_show action.'}
+    - everyone: disallow
+    """
+    return {
+        'success': False,
+        'msg': 'You are not authorized to perform the task_status_show action.'
+    }
 
 
 def user_show(context, data_dict):
-  """Implementation of ckan.logic.auth.get.user_show
+    """Implementation of ckan.logic.auth.get.user_show
 
-  - everyone: only allow to see self
-  - sysadmin: can see everyone
-  """
-  model = context['model']
+    - everyone: only allow to see self
+    - sysadmin: can see everyone
+    """
+    model = context['model']
 
-  id = data_dict.get('id', None)
-  provided_user = data_dict.get('user_obj', None)
-  if id:
-    user_obj = model.User.get(id)
-  elif provided_user:
-    user_obj = provided_user
-  else:
-    raise NotFound
-  
-  requester = context.get('user', None)
-  sysadmin = False
-  if requester:
-    sysadmin = authz.is_sysadmin(requester)
-    requester_looking_at_own_account = requester == user_obj.name
-    if (sysadmin or requester_looking_at_own_account):
-      return { 'success': True }
+    _id = data_dict.get('id', None)
+    provided_user = data_dict.get('user_obj', None)
+    if _id:
+        user_obj = model.User.get(_id)
+    elif provided_user:
+        user_obj = provided_user
     else:
-      return { 'success': False , 'msg': 'You are only authorized to see your own user details.' }
-  else:
-    return { 'success': False , 'msg': 'You are only authorized to see your own user details.' }
+        raise logic.NotFound
+
+    requester = context.get('user', None)
+    sysadmin = False
+    if requester:
+        sysadmin = authz.is_sysadmin(requester)
+        requester_looking_at_own_account = requester == user_obj.name
+        if (sysadmin or requester_looking_at_own_account):
+            return { 'success': True }
+        else:
+            return {
+                'success': False ,
+                'msg': 'You are only authorized to see your own user details.'
+            }
+    else:
+        return {
+            'success': False ,
+            'msg': 'You are only authorized to see your own user details.'
+        }
 
 
 def vocabulary_show(context, data_dict):
-  """Implementation of ckan.logic.auth.get.vocabulary_show
+    """Implementation of ckan.logic.auth.get.vocabulary_show
 
-  - anonymous: disallow
-  - all others: standard behaviour
-  """
-  return ckanget.vocabulary_show(context, data_dict)
+    - anonymous: disallow
+    - all others: standard behaviour
+    """
+    return ckanget.vocabulary_show(context, data_dict)
 
 
 # Methods in ckan.logic.auth.get not implemented here

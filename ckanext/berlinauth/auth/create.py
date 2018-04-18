@@ -1,37 +1,36 @@
 # encoding: utf-8
+"""Custom implementations of auth functions from ckan.logic.auth.create
+"""
+
 
 import logging
-import ckan.plugins as plugins
 import ckan.logic.auth.create as ckancreate
-import ckan.common as c
-import ckan.authz as authz
-from ckan.model.group import Group
 
 log = logging.getLogger(__name__)
 
 
 def rating_create(context, data_dict):
-  """Implementation of ckan.logic.auth.create.rating_create
+    """Implementation of ckan.logic.auth.create.rating_create
 
-  - everyone: disallow
+    - everyone: disallow
 
-  This is dead code, as ckan.logic.action.create.rating_create never
-  calls this. WTF?
-  """
-  return { 'success': False, 'msg': 'create_rating is not supported.'}
+    This is dead code, as ckan.logic.action.create.rating_create never
+    calls this. WTF?
+    """
+    return {'success': False, 'msg': 'create_rating is not supported.'}
 
 
 def user_create(context, data_dict=None):
-  """Implementation of ckan.logic.auth.create.user_create
+    """Implementation of ckan.logic.auth.create.user_create
 
-  - anonymous: disallow
-  - all others: standard behaviour
+    - anonymous: disallow
+    - all others: standard behaviour
 
-  Also handled by settings:
-  - ckan.auth.create_user_via_api
-  - ckan.auth.create_user_via_web
-  """
-  return ckancreate.user_create(context, data_dict)
+    Also handled by settings:
+    - ckan.auth.create_user_via_api
+    - ckan.auth.create_user_via_web
+    """
+    return ckancreate.user_create(context, data_dict)
 
 
 # Functions in ckan.logic.auth.create not implemented here
