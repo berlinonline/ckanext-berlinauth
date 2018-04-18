@@ -13,6 +13,9 @@ log = logging.getLogger(__name__)
 @ckan.logic.side_effect_free
 def organization_list(context, data_dict):
     """Implementation of ckan.logic.action.get.organization_list
+
+    Hides groups/organizations included in berlin.technical_groups
+    from everyone but sysadmins.
     """
     org_list = ckanget.organization_list(context, data_dict)
     user = context.get('auth_user_obj', None)
@@ -28,6 +31,13 @@ def organization_list(context, data_dict):
 
 
 def _filter_group_show(context, group_dict):
+    """Filter the output of group_show / organization_show action
+    functions to only show members which the requesting user is
+    allowed to see:
+
+    - logged_in: only self
+    - sysadmin: all
+    """
     current_user = context.get('auth_user_obj', None)
     if not current_user:
         group_dict.pop('users', None)
@@ -41,6 +51,12 @@ def _filter_group_show(context, group_dict):
 @ckan.logic.side_effect_free
 def group_show(context, data_dict):
     """Implementation of ckan.logic.action.get.group_show
+
+    Only includes members in the 'users' attribute which the
+    requesting user is allowed to see:
+
+    - logged_in: only self
+    - sysadmin: all
     """
     group_dict = ckanget.group_show(context, data_dict)
     group_dict = _filter_group_show(context, group_dict)
@@ -50,6 +66,12 @@ def group_show(context, data_dict):
 @ckan.logic.side_effect_free
 def organization_show(context, data_dict):
     """Implementation of ckan.logic.action.get.organization_show
+
+    Only includes members in the 'users' attribute which the
+    requesting user is allowed to see:
+
+    - logged_in: only self
+    - sysadmin: all
     """
     group_dict = ckanget.organization_show(context, data_dict)
     group_dict = _filter_group_show(context, group_dict)
