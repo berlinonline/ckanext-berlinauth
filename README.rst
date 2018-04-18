@@ -32,8 +32,8 @@
 ckanext-berlinauth
 ==================
 
-Implements IAuthFunctions to achieve the authorization model for the CKAN
-installation for "Offen Daten Berlin".
+Implements IAuthFunctions and IActions to achieve the authorization model for 
+the CKAN installation for "Offen Daten Berlin".
 
 -------------
 Register-mode
@@ -49,8 +49,10 @@ The general authorization model is as follows:
 - anonymous access to a subset of the API
 - restricted access for logged-in users (administrative staff and select others)
 
-  - no user list/show
+  - no user list/show (except for self)
   - no vocabulary list/show
+  - hide certain groups from ``group_list``, ``organization_list``
+  - hide users except self from ``group_show``, ``organization_show``
   - ... 
 
 --------------------------------
@@ -60,7 +62,7 @@ Additional Configuration Options
 - ``berlin.technical_groups``: A space-separated list of group/organizations
   that are considered 'technical'. A technical organization is one which does
   not reflect a real-world organization, but has only been introduced to structure
-  permissions.
+  permissions. Technical groups are hidden for non-sysadmin users.
 
 .. code::
 
