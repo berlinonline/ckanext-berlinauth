@@ -8,31 +8,18 @@
 .. image:: https://coveralls.io/repos/berlinonline/ckanext-berlinauth/badge.svg
   :target: https://coveralls.io/r/berlinonline/ckanext-berlinauth
 
-.. image:: https://pypip.in/download/ckanext-berlinauth/badge.svg
-    :target: https://pypi.python.org/pypi//ckanext-berlinauth/
-    :alt: Downloads
-
-.. image:: https://pypip.in/version/ckanext-berlinauth/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-berlinauth/
-    :alt: Latest Version
-
-.. image:: https://pypip.in/py_versions/ckanext-berlinauth/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-berlinauth/
-    :alt: Supported Python versions
-
-.. image:: https://pypip.in/status/ckanext-berlinauth/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-berlinauth/
-    :alt: Development Status
-
-.. image:: https://pypip.in/license/ckanext-berlinauth/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-berlinauth/
-    :alt: License
 
 ==================
 ckanext-berlinauth
 ==================
 
-Implements IAuthFunctions and IActions to achieve the authorization model for 
+Implements 
+`IAuthFunctions
+<http://docs.ckan.org/en/ckan-2.7.3/extensions/plugin-interfaces.html#ckan.plugins.interfaces.IAuthFunctions>`_
+and 
+`IActions
+<http://docs.ckan.org/en/ckan-2.7.3/extensions/plugin-interfaces.html#ckan.plugins.interfaces.IActions>`_ 
+to achieve the authorization model for 
 the CKAN installation for "Offen Daten Berlin".
 
 -------------
@@ -42,6 +29,10 @@ Register-mode
 "Register-mode" is the implementation for the use case where we have CKAN
 as a separate "backend" system, only accessible to administrative staff who 
 add and manage datasets. In this scenario, CKAN is called the "Datenregister".
+
+Only ``auth.get`` and ``auth.create`` functions have been implemented, as the 
+standard CKAN authorization model in combination with the ``ckan.auth`` config 
+options is fine for update, patch and delete.
 
 The general authorization model is as follows:
 
