@@ -34,7 +34,7 @@ def user_create(context, data_dict=None):
   return ckancreate.user_create(context, data_dict)
 
 
-# Methods in ckan.logic.auth.create not implemented here
+# Functions in ckan.logic.auth.create not implemented here
 # (and why):
 
     # def _group_or_org_member_create(context, data_dict):
@@ -93,3 +93,9 @@ def user_create(context, data_dict=None):
 
     # def vocabulary_create(context, data_dict):
     # only allowed for sysadmin in standard CKAN
+
+# Other functions from ckan.logic.auth.create
+
+    # def file_upload(context, data_dict=None):
+    # def user_invite(context, data_dict):
+    # def _check_group_auth(context, data_dict):
