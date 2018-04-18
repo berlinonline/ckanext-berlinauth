@@ -21,9 +21,9 @@ def organization_list(context, data_dict):
         technical_groups = technical_groups.split(" ")
         all_fields = asbool(data_dict.get('all_fields', None))
         if all_fields:
-            org_list = list(filter(lambda x: x['name'] not in technical_groups, org_list))
+            org_list = [x for x in org_list if x['name'] not in technical_groups]
         else:
-            org_list = list(filter(lambda x: x not in technical_groups, org_list))
+            org_list = [x for x in org_list if x not in technical_groups]
     return org_list
 
 
@@ -33,7 +33,7 @@ def _filter_group_show(context, group_dict):
         group_dict.pop('users', None)
     elif not current_user.sysadmin:
         users = group_dict.get('users', [])
-        users = list(filter(lambda x: x['name'] == current_user.name, users))
+        users = [x for x in users if x['name'] == current_user.name]
         group_dict['users'] = users
     return group_dict
 
