@@ -66,6 +66,8 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
 
   def get_actions(self):
     return {
+      'group_show': action_get.group_show ,
+      'organization_show': action_get.organization_show ,
       'organization_list': action_get.organization_list ,
     }
 
