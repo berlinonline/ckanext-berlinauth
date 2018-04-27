@@ -69,6 +69,16 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
             'user_show': auth_get.user_show ,
             'vocabulary_show': auth_get.vocabulary_show ,
             'package_show': auth_get.package_show ,
+            'group_list': auth_get.group_list ,
+            'license_list': auth_get.license_list ,
+            'package_list': auth_get.package_list ,
+            'resource_view_list': auth_get.resource_view_list ,
+            'tag_list': auth_get.tag_list ,
+            'organization_show': auth_get.organization_show ,
+            'resource_show': auth_get.resource_show ,
+            'resource_view_show': auth_get.resource_view_show ,
+            'tag_show': auth_get.tag_show ,
+            'package_search': auth_get.package_search ,
 
             # create
             'rating_create': auth_create.rating_create ,

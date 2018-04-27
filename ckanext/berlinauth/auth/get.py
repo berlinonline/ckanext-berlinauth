@@ -65,14 +65,19 @@ def member_roles_list(context, data_dict):
     }
 
 
+@plugins.toolkit.auth_allow_anonymous_access
 def organization_list(context, data_dict):
     """Implementation of ckan.logic.auth.get.organization_list
 
-    - anonymous: disallow
-    - logged_in: show only those organizations for which group_show is true
+    - anonymous: disallow, except through API
+    - logged_in: standard behaviour
       (implemented via CKAN Core)
     """
-    return ckanget.organization_list(context, data_dict)
+    anon_through_api = _anon_access(context)
+    if not anon_through_api or anon_through_api.get('success', False):
+        return ckanget.organization_list(context, data_dict)
+    else:
+        return {'success': False}
 
 
 def organization_list_for_user(context, data_dict):
@@ -140,21 +145,25 @@ def vocabulary_list(context, data_dict):
 # xyz_show functions:
 # egrep "def ([a-z_]+?_show(_[a-z_]+?)?)\(" ckan/logic/auth/get.py | sort | uniq
 
+@plugins.toolkit.auth_allow_anonymous_access
 def group_show(context, data_dict):
     """Implementation of ckan.logic.auth.get.group_show
 
-    - anonymous: disallow
-    - logged_in: show only groups that are not listed in the
+    - anonymous: disallow, except through through API
+    - all: show only groups that are not listed in the
       berlin.technical_groups config
     """
-    technical_groups = c.config.get("berlin.technical_groups", "")
-    technical_groups = technical_groups.split(" ")
-    group = Group.get(data_dict['id'])
-    if group.name in technical_groups:
-        return { 'success': False }
+    anon_through_api = _anon_access(context)
+    if not anon_through_api or anon_through_api.get('success', False):
+        technical_groups = c.config.get("berlin.technical_groups", "")
+        technical_groups = technical_groups.split(" ")
+        group = Group.get(data_dict['id'])
+        if group.name in technical_groups:
+            return { 'success': False }
+        else:
+            return { 'success': True }
     else:
-        return { 'success': True }
-
+        return { 'success': False }
 
 def resource_status_show(context, data_dict):
     """Implementation of ckan.logic.auth.get.resource_status_show
@@ -258,8 +267,13 @@ def vocabulary_show(context, data_dict):
     # def group_follower_list(context, data_dict):
     # not allowed for anonymous in standard CKAN
 
-    # def group_list(context, data_dict):
-    # should be allowed for anonymous
+@plugins.toolkit.auth_allow_anonymous_access
+def group_list(context, data_dict):
+    anon_through_api = _anon_access(context)
+    if anon_through_api:
+        return anon_through_api
+    else:
+        return ckanget.group_list(context, data_dict)
 
     # def group_list_authz(context, data_dict):
     # same as group_list
@@ -270,8 +284,13 @@ def vocabulary_show(context, data_dict):
     # def job_list(context, data_dict):
     # not allowed for anonymous in standard CKAN
 
-    # def license_list(context, data_dict):
-    # should be allowed for anonymous
+@plugins.toolkit.auth_allow_anonymous_access
+def license_list(context, data_dict):
+    anon_through_api = _anon_access(context)
+    if anon_through_api:
+        return anon_through_api
+    else:
+        return ckanget.license_list(context, data_dict)
 
     # def organization_followee_list(context, data_dict):
     # not allowed for anonymous in standard CKAN
@@ -279,18 +298,33 @@ def vocabulary_show(context, data_dict):
     # def organization_follower_list(context, data_dict):
     # not allowed for anonymous in standard CKAN
 
-    # def package_list(context, data_dict):
-    # should be allowed for anonymous
+@plugins.toolkit.auth_allow_anonymous_access
+def package_list(context, data_dict):
+    anon_through_api = _anon_access(context)
+    if anon_through_api:
+        return anon_through_api
+    else:
+        return ckanget.package_list(context, data_dict)
 
     # def package_relationships_list(context, data_dict):
     # standard behaviour allows if both is_authorized('package_show')
     # is true for both packages
 
-    # def resource_view_list(context, data_dict):
-    # should be allowed for anonymous
+@plugins.toolkit.auth_allow_anonymous_access
+def resource_view_list(context, data_dict):
+    anon_through_api = _anon_access(context)
+    if anon_through_api:
+        return anon_through_api
+    else:
+        return ckanget.resource_view_list(context, data_dict)
 
-    # def tag_list(context, data_dict):
-    # should be allowed for anonymous
+@plugins.toolkit.auth_allow_anonymous_access
+def tag_list(context, data_dict):
+    anon_through_api = _anon_access(context)
+    if anon_through_api:
+        return anon_through_api
+    else:
+        return ckanget.tag_list(context, data_dict)
 
     # def user_followee_list(context, data_dict):
     # not allowed for anonymous in standard CKAN
@@ -305,34 +339,60 @@ def vocabulary_show(context, data_dict):
     # same as group_show
 
     # def help_show(context, data_dict):
-    # should be allowed for anonymous
+    # should be allowed for anonymous, and is only accessed through api anyway
 
     # def job_show(context, data_dict):
     # not allowed for anonymous in standard CKAN
 
-    # def organization_show(context, data_dict):
-    # same as group_show
+@plugins.toolkit.auth_allow_anonymous_access
+def organization_show(context, data_dict):
+    anon_through_api = _anon_access(context)
+    if anon_through_api:
+        return anon_through_api
+    else:
+        return ckanget.organization_show(context, data_dict)
+
 
 @plugins.toolkit.auth_allow_anonymous_access
 def package_show(context, data_dict):
     anon_through_api = _anon_access(context)
-    log.info(anon_through_api)
     if anon_through_api:
         return anon_through_api
     else:
         return ckanget.package_show(context, data_dict)
 
-    # def resource_show(context, data_dict):
-    # should be allowed for anonymous
+@plugins.toolkit.auth_allow_anonymous_access
+def resource_show(context, data_dict):
+    anon_through_api = _anon_access(context)
+    if anon_through_api:
+        return anon_through_api
+    else:
+        return ckanget.resource_show(context, data_dict)
 
-    # def resource_view_show(context, data_dict):
-    # should be allowed for anonymous
+@plugins.toolkit.auth_allow_anonymous_access
+def resource_view_show(context, data_dict):
+    anon_through_api = _anon_access(context)
+    if anon_through_api:
+        return anon_through_api
+    else:
+        return ckanget.resource_view_show(context, data_dict)
 
-    # def tag_show(context, data_dict):
-    # should be allowed for anonymous
+@plugins.toolkit.auth_allow_anonymous_access
+def tag_show(context, data_dict):
+    anon_through_api = _anon_access(context)
+    if anon_through_api:
+        return anon_through_api
+    else:
+        return ckanget.tag_show(context, data_dict)
 
     # def tag_show_rest(context, data_dict):
-    # should be allowed for anonymous
+    # same as tag_show
 
-    # def package_search(context, data_dict):
-    # should be allowed for anonymous
+@plugins.toolkit.auth_allow_anonymous_access
+def package_search(context, data_dict):
+    anon_through_api = _anon_access(context)
+    if anon_through_api:
+        return anon_through_api
+    else:
+        return ckanget.package_search(context, data_dict)
+    
