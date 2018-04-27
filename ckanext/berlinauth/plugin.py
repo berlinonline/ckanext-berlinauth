@@ -68,6 +68,7 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
             'task_status_show': auth_get.task_status_show ,
             'user_show': auth_get.user_show ,
             'vocabulary_show': auth_get.vocabulary_show ,
+            'package_show': auth_get.package_show ,
 
             # create
             'rating_create': auth_create.rating_create ,

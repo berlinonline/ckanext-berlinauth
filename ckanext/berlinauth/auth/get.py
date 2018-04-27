@@ -12,6 +12,17 @@ from ckan.model.group import Group
 
 log = logging.getLogger(__name__)
 
+def _anon_access(context):
+    path = c.request.path
+    if authz.auth_is_anon_user(context):
+        if not path.startswith("/api"):
+            return {'success': False, 'msg': 'Site access requires an authenticated user.'}
+        else:
+            return {'success': True}
+    else:
+        return False
+    
+
 @plugins.toolkit.auth_allow_anonymous_access
 def site_read(context, data_dict=None):
     """Implementation of ckan.logic.auth.get.site_read
@@ -23,12 +34,9 @@ def site_read(context, data_dict=None):
     everyone else:
     - fall back to default behaviour of ckan.logic.auth.get.site_read
     """
-    path = c.request.path
-    if authz.auth_is_anon_user(context):
-        if not path.startswith("/api"):
-            return {'success': False, 'msg': 'Site access requires an authenticated user.'}
-        else:
-            return {'success': True}
+    anon_through_api = _anon_access(context)
+    if anon_through_api:
+        return anon_through_api
     else:
         return ckanget.site_read(context, data_dict)
 
@@ -305,11 +313,14 @@ def vocabulary_show(context, data_dict):
     # def organization_show(context, data_dict):
     # same as group_show
 
-    # def package_show(context, data_dict):
-    # should be allowed for anonymous
-
-    # def package_show_rest(context, data_dict):
-    # should be allowed for anonymous
+@plugins.toolkit.auth_allow_anonymous_access
+def package_show(context, data_dict):
+    anon_through_api = _anon_access(context)
+    log.info(anon_through_api)
+    if anon_through_api:
+        return anon_through_api
+    else:
+        return ckanget.package_show(context, data_dict)
 
     # def resource_show(context, data_dict):
     # should be allowed for anonymous
