@@ -8,6 +8,7 @@ import ckan.logic.auth.get as ckanget
 import ckan.common as c
 import ckan.authz as authz
 import ckan.logic as logic
+import re
 from ckan.model.group import Group
 
 log = logging.getLogger(__name__)
@@ -15,10 +16,14 @@ log = logging.getLogger(__name__)
 def _anon_access(context):
     path = c.request.path
     if authz.auth_is_anon_user(context):
-        if not path.startswith("/api"):
-            return {'success': False, 'msg': 'Site access requires an authenticated user.'}
-        else:
+        if path.startswith("/api"):
             return {'success': True}
+        elif path == "/catalog.rdf":
+            return {'success': True}
+        elif re.match('^/dataset/.+?\.rdf$', path):
+            return {'success': True}
+        else:
+            return {'success': False, 'msg': 'Site access requires an authenticated user.'}
     else:
         return False
     
