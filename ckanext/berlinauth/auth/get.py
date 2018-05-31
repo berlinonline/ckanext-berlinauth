@@ -8,6 +8,7 @@ import re
 import ckan.plugins as plugins
 import ckan.logic.auth.get as ckanget
 import ckan.common as c
+import ckan.lib.helpers as h
 import ckan.authz as authz
 import ckan.logic as logic
 from ckan.model.group import Group
@@ -23,6 +24,8 @@ def _anon_access(context):
             return {'success': True}
         elif re.match('^/dataset/.+?\.(rdf|ttl)$', path):
             return {'success': True}
+        elif path == "/" or path.startswith("/user/logged_out") or path.startswith("/user/logged_in"):
+            h.redirect_to('/user/login')
         else:
             return {'success': False, 'msg': 'Site access requires an authenticated user.'}
     else:
