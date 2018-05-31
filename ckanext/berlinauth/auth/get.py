@@ -198,12 +198,26 @@ def task_status_show(context, data_dict):
     }
 
 
+@plugins.toolkit.auth_allow_anonymous_access
 def user_show(context, data_dict):
     """Implementation of ckan.logic.auth.get.user_show
 
     - everyone: only allow to see self
     - sysadmin: can see everyone
     """
+
+    # anonymous can call do user_show when coming from
+    # /user/reset - otherwise resetting passwords is 
+    # not possible
+    if authz.auth_is_anon_user(context):
+        if (c.request.path == "/user/reset"):
+            return { 'success': True }
+        else:
+            return {
+                'success': False ,
+                'msg': 'Site access requires an authenticated user.'
+            }
+
     model = context['model']
 
     _id = data_dict.get('id', None)
