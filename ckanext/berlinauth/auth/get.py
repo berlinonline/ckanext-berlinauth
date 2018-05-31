@@ -234,7 +234,8 @@ def user_show(context, data_dict):
     if requester:
         sysadmin = authz.is_sysadmin(requester)
         requester_looking_at_own_account = requester == user_obj.name
-        if (sysadmin or requester_looking_at_own_account):
+        path = c.request.path
+        if (sysadmin or requester_looking_at_own_account or path.startswith("/user/reset/")):
             return { 'success': True }
         else:
             return {
