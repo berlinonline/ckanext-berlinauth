@@ -24,6 +24,8 @@ def _anon_access(context):
             return {'success': True}
         elif re.match('^/dataset/.+?\.(rdf|ttl)$', path):
             return {'success': True}
+        elif path == "/about":
+            return {'success': True}
         elif path == "/" or path.startswith("/user/logged_out") or path.startswith("/user/logged_in"):
             h.redirect_to('/user/login')
         else:
