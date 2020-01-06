@@ -20,9 +20,10 @@ def _anon_access(context):
     if authz.auth_is_anon_user(context):
         if path.startswith("/api"):
             return {'success': True}
-        elif path == "/catalog.rdf" or path == "/catalog.ttl":
+        elif re.match('^/catalog\.(rdf|ttl|jsonld)$', path):
+        # elif path == "/catalog.rdf" or path == "/catalog.ttl":
             return {'success': True}
-        elif re.match('^/dataset/.+?\.(rdf|ttl)$', path):
+        elif re.match('^/dataset/.+?\.(rdf|ttl|jsonld)$', path):
             return {'success': True}
         elif path == "/about":
             return {'success': True}
