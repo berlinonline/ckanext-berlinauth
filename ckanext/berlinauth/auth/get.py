@@ -27,6 +27,8 @@ def _anon_access(context):
             return {'success': True}
         elif path == "/about":
             return {'success': True}
+        elif path == "/datenschutzerklaerung":
+            return {'success': True}
         elif path == "/" or path.startswith("/user/logged_out") or path.startswith("/user/logged_in"):
             h.redirect_to('/user/login')
         else:
