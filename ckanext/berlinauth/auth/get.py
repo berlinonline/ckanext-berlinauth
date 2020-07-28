@@ -21,7 +21,8 @@ def _anon_access(context):
         if path.startswith("/api"):
             return {'success': True}
         elif re.match('^/catalog\.(rdf|ttl|jsonld)$', path):
-        # elif path == "/catalog.rdf" or path == "/catalog.ttl":
+            return {'success': True}
+        elif re.match('^/catalog_no_fb\.(rdf|ttl|jsonld)$', path):
             return {'success': True}
         elif re.match('^/dataset/.+?\.(rdf|ttl|jsonld)$', path):
             return {'success': True}
