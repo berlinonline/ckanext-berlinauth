@@ -43,6 +43,15 @@ Technical groups are hidden for non-sysadmin users.
 
 ```ini
 berlin.technical_groups = simplesearch harvester-fis-broker harvester-stromnetz-berlin
-  
+```
+
+## License
+
+This material is copyright © [BerlinOnline Stadtportal GmbH & Co. KG](https://www.berlinonline.net/).
+
+This extension is open and licensed under the GNU Affero General Public License (AGPL) v3.0.
+Its full text may be found at:
+
+http://www.fsf.org/licensing/licenses/agpl-3.0.html
 
 
