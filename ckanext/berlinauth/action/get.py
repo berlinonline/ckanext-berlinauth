@@ -6,7 +6,7 @@ import logging
 import ckan as ckan
 import ckan.logic.action.get as ckanget
 import ckan.common as c
-from paste.deploy.converters import asbool
+from ckan.plugins.toolkit import asbool
 
 log = logging.getLogger(__name__)
 
