@@ -11,7 +11,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env/
+ckanenv/
 build/
 develop-eggs/
 dist/
@@ -35,7 +35,6 @@ htmlcov/
 .tox/
 .coverage
 .cache
-nosetests.xml
 coverage.xml
 
 # Sphinx documentation
