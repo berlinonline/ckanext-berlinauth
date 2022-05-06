@@ -36,6 +36,7 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
         config['ckan.auth.user_delete_organizations'] = False
         config['ckan.auth.create_user_via_api'] = False
         config['ckan.auth.create_user_via_web'] = False
+        config['ckan.auth.allow_dataset_collaborators'] = True
         config['ckan.auth.roles_that_cascade_to_sub_groups'] = 'admin'
 
         config['berlin.technical_groups'] = \
