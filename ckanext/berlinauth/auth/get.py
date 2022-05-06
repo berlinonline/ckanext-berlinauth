@@ -426,3 +426,12 @@ def package_search(context, data_dict):
     else:
         return ckanget.package_search(context, data_dict)
     
+def status_show(context, data_dict):
+    """Implementation of ckan.logic.auth.get.status_show
+
+    - everyone: disallow
+    """
+    return {
+        'success': False,
+        'msg': 'You are not authorized to perform the status_show action.'
+    }

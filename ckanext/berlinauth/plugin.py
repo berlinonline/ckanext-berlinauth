@@ -80,6 +80,7 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
             'resource_view_show': auth_get.resource_view_show ,
             'tag_show': auth_get.tag_show ,
             'package_search': auth_get.package_search ,
+            'status_show': auth_get.status_show ,
 
             # create
             'rating_create': auth_create.rating_create ,
