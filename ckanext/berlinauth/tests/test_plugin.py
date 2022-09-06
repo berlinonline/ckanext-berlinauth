@@ -102,6 +102,18 @@ activityid_forbidden = {
     "activity_show",
 }
 
+datasetid_allowed = {
+    "package_activity_list",
+    "package_relationships_list",
+}
+
+datasetid_forbidden = {
+    "am_following_dataset",
+    "package_collaborator_list",
+    "dataset_follower_count",
+    "dataset_follower_list",
+}
+
 # @pytest.fixture
 # def group():
 #     '''Fixture to create a group'''
@@ -255,7 +267,32 @@ class TestActivityFunctions(object):
             status=403
        )
 
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestDatasetFunctions(object):
+    '''Tests that check authorization for API functions on dataset objects.'''
 
+    @pytest.mark.parametrize("function", list(datasetid_allowed - no_auth_function))
+    def test_anonymous_access_allowed_datasetid(self, app, function):
+        user = factories.User()
+        org = factories.Organization(user=user)
+        dataset = factories.Dataset(owner_org=org['id'])
+        app.get(
+            url=f"/api/3/action/{function}",
+            query_string=f"id={dataset['id']}",
+            status=200
+        )
+
+    @pytest.mark.parametrize("function", list(datasetid_forbidden - no_auth_function))
+    def test_anonymous_access_forbidden_datasetid(self, app, function):
+        user = factories.User()
+        org = factories.Organization(user=user)
+        dataset = factories.Dataset(owner_org=org['id'])
+        app.get(
+            url=f"/api/3/action/{function}",
+            query_string=f"id={dataset['id']}",
+            status=403
+        )
 
     # def test_user_show_forbidden_for_anonymous(self, app, user):
     #     '''Check that anonymous cannot show users.'''
