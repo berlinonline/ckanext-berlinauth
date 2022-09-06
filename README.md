@@ -45,6 +45,14 @@ Technical groups are hidden for non-sysadmin users.
 berlin.technical_groups = simplesearch harvester-fis-broker harvester-stromnetz-berlin
 ```
 
+- `berlin.public_pages`:
+By default, access to the Datenregister is restricted to logged-in users.
+This setting contains a space-separated list of paths that should be visible to the public, i.e., to anonymous users.
+
+```ini
+berlin.public_pages = about datenschutzerklaerung
+```
+
 ## License
 
 This material is copyright © [BerlinOnline Stadtportal GmbH & Co. KG](https://www.berlinonline.net/).

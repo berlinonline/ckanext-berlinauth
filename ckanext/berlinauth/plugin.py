@@ -4,9 +4,14 @@ Berlin Open Data Portal.
 """
 
 import ckan.plugins as plugins
+import ckan.common as c
 import ckanext.berlinauth.auth.get as auth_get
 import ckanext.berlinauth.auth.create as auth_create
 import ckanext.berlinauth.action.get as action_get
+
+def _public_pages():
+    public_paths = c.config.get("berlin.public_pages", "").split()
+    return [f"/{path}" for path in public_paths]
 
 class BerlinauthPlugin(plugins.SingletonPlugin):
     """Main plugin class.

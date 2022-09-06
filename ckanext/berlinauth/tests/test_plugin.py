@@ -15,7 +15,7 @@ import ckan.tests.helpers as test_helpers
 
 from ckan import model
 
-from ckanext.berlinauth.auth.get import _public_pages
+from ckanext.berlinauth.plugin import _public_pages
 
 PLUGIN_NAME = 'berlinauth'
 LOG = logging.getLogger(__name__)
@@ -349,3 +349,21 @@ class TestDatasetFunctions(object):
 # # should not work
 # curl -X POST -d '{ "id": "webatlas-berlin-wms" }' https://datenregister.stage.berlinonline.net/api/3/action/package_delete | jq "."
 
+
+class TestStaticPages(object):
+
+    c.config['berlin.public_pages'] = "about"
+
+    @pytest.mark.parametrize("page", _public_pages())
+    def test_anonymous_static_pages_allowed(self, app, page):
+        app.get(
+            url=f"{page}",
+            status=200
+        )
+
+    @pytest.mark.parametrize("page", ["group", "organization"])
+    def test_anonymous_static_pages_forbidden(self, app, page):
+        app.get(
+            url=f"/{page}",
+            status=200
+        )

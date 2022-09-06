@@ -3,6 +3,7 @@
 ## Development
 
 - Convert to Python 3.
+- Add `berlin.public_pages` config setting to define pages that can be accessed by anonymous users (all other pages require login).
 - Update README.
 - This is the first version that requires Python 3 / CKAN >= 2.9.
 
