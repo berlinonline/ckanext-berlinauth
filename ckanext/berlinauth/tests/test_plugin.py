@@ -8,11 +8,14 @@ import logging
 import py
 import pytest
 
+import ckan.common as c
 import ckan.logic as logic
 import ckan.tests.factories as factories
 import ckan.tests.helpers as test_helpers
 
 from ckan import model
+
+from ckanext.berlinauth.auth.get import _public_pages
 
 PLUGIN_NAME = 'berlinauth'
 LOG = logging.getLogger(__name__)
@@ -20,17 +23,14 @@ LOG = logging.getLogger(__name__)
 # The following are action functions that have no corresponding auth
 # functions. Hopefully this will change in a future release of CKAN.
 no_auth_function = {
-    "follow_dataset",
-    "follow_group",
-    "follow_user",
-    "unfollow_dataset",
-    "unfollow_group",
-    "unfollow_user",
     "am_following_dataset",
     "am_following_group",
     "am_following_user",
     "dataset_followee_count",
     "dataset_follower_count",
+    "follow_dataset",
+    "follow_group",
+    "follow_user",
     "followee_count",
     "group_followee_count",
     "group_follower_count",
@@ -41,11 +41,14 @@ no_auth_function = {
     "resource_search",
     "roles_show",
     "tag_search",
+    "task_status_update_many",
     "term_translation_show",
+    "term_translation_update_many",
+    "unfollow_dataset",
+    "unfollow_group",
+    "unfollow_user",
     "user_followee_count",
     "user_follower_count",
-    "task_status_update_many",
-    "term_translation_update_many",
 }
 
 parameterless_allowed = {
