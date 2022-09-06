@@ -435,3 +435,9 @@ def status_show(context, data_dict):
         'success': False,
         'msg': 'You are not authorized to perform the status_show action.'
     }
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def package_collaborator_list(context, data_dict):
+    '''Checks if a user is allowed to list the collaborators from a dataset.
+    '''
+    return ckanget.package_collaborator_list(context, data_dict)
