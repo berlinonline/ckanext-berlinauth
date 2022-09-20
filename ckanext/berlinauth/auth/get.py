@@ -13,47 +13,8 @@ import ckan.authz as authz
 import ckan.logic as logic
 from ckan.model.group import Group
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
-def _anon_access(context):
-    path = c.request.path
-    if authz.auth_is_anon_user(context):
-        if path.startswith("/api"):
-            return {'success': True}
-        elif re.match('^/catalog\.(rdf|ttl|jsonld)$', path):
-            return {'success': True}
-        elif re.match('^/catalog_no_fb\.(rdf|ttl|jsonld)$', path):
-            return {'success': True}
-        elif re.match('^/dataset/.+?\.(rdf|ttl|jsonld)$', path):
-            return {'success': True}
-        elif path == "/about":
-            return {'success': True}
-        elif path == "/datenschutzerklaerung":
-            return {'success': True}
-        elif path == "/" or path.startswith("/user/logged_out") or path.startswith("/user/logged_in"):
-            h.redirect_to('/user/login')
-        else:
-            return {'success': False, 'msg': 'Site access requires an authenticated user.'}
-    else:
-        return False
-    
-
-@plugins.toolkit.auth_allow_anonymous_access
-def site_read(context, data_dict=None):
-    """Implementation of ckan.logic.auth.get.site_read
-
-    anonymous:
-    - allow api calls (path starts with "/api")
-    - disallow everything else
-
-    everyone else:
-    - fall back to default behaviour of ckan.logic.auth.get.site_read
-    """
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.site_read(context, data_dict)
 
 # xyz_list functions:
 # egrep "def ([a-z_]+?_list(_[a-z_]+?)?)\(" ckan/logic/auth/get.py | sort | uniq
@@ -80,21 +41,7 @@ def member_roles_list(context, data_dict):
     }
 
 
-@plugins.toolkit.auth_allow_anonymous_access
-def organization_list(context, data_dict):
-    """Implementation of ckan.logic.auth.get.organization_list
-
-    - anonymous: disallow, except through API
-    - logged_in: standard behaviour
-      (implemented via CKAN Core)
-    """
-    anon_through_api = _anon_access(context)
-    if not anon_through_api or anon_through_api.get('success', False):
-        return ckanget.organization_list(context, data_dict)
-    else:
-        return {'success': False}
-
-
+@plugins.toolkit.auth_disallow_anonymous_access
 def organization_list_for_user(context, data_dict):
     """Implementation of ckan.logic.auth.get.organization_list_for_user
 
@@ -148,6 +95,7 @@ def user_list(context, data_dict):
     }
 
 
+@plugins.toolkit.auth_disallow_anonymous_access
 def vocabulary_list(context, data_dict):
     """Implementation of ckan.logic.auth.get.vocabulary_list
 
@@ -168,17 +116,13 @@ def group_show(context, data_dict):
     - all: show only groups that are not listed in the
       berlin.technical_groups config
     """
-    anon_through_api = _anon_access(context)
-    if not anon_through_api or anon_through_api.get('success', False):
-        technical_groups = c.config.get("berlin.technical_groups", "")
-        technical_groups = technical_groups.split(" ")
-        group = Group.get(data_dict['id'])
-        if group.name in technical_groups:
-            return { 'success': False }
-        else:
-            return { 'success': True }
-    else:
+    technical_groups = c.config.get("berlin.technical_groups", "")
+    technical_groups = technical_groups.split(" ")
+    group = Group.get(data_dict['id'])
+    if group.name in technical_groups:
         return { 'success': False }
+    else:
+        return { 'success': True }
 
 def resource_status_show(context, data_dict):
     """Implementation of ckan.logic.auth.get.resource_status_show
@@ -195,7 +139,7 @@ def revision_show(context, data_dict):
     """
     return { 'success': False, 'msg': 'You are not authorized to perform the revision_show action.'}
 
-
+@plugins.toolkit.auth_disallow_anonymous_access
 def task_status_show(context, data_dict):
     """Implementation of ckan.logic.auth.get.task_status_show
 
@@ -258,6 +202,7 @@ def user_show(context, data_dict):
         }
 
 
+@plugins.toolkit.auth_disallow_anonymous_access
 def vocabulary_show(context, data_dict):
     """Implementation of ckan.logic.auth.get.vocabulary_show
 
@@ -267,165 +212,23 @@ def vocabulary_show(context, data_dict):
     return ckanget.vocabulary_show(context, data_dict)
 
 
-# Methods in ckan.logic.auth.get not implemented here
-# (and why):
-
-    # def _followee_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-    # def config_option_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-    # def current_package_list_with_resources(context, data_dict):
-    # same as package_list
-
-    # def dashboard_activity_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-    # def dataset_followee_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-    # def dataset_follower_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-    # def followee_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-    # def group_followee_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-    # def group_follower_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-@plugins.toolkit.auth_allow_anonymous_access
-def group_list(context, data_dict):
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.group_list(context, data_dict)
-
-    # def group_list_authz(context, data_dict):
-    # same as group_list
-
-    # def group_list_available(context, data_dict):
-    # same as group_list
-
-    # def job_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-@plugins.toolkit.auth_allow_anonymous_access
-def license_list(context, data_dict):
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.license_list(context, data_dict)
-
-    # def organization_followee_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-    # def organization_follower_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-@plugins.toolkit.auth_allow_anonymous_access
-def package_list(context, data_dict):
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.package_list(context, data_dict)
-
-    # def package_relationships_list(context, data_dict):
-    # standard behaviour allows if both is_authorized('package_show')
-    # is true for both packages
-
-@plugins.toolkit.auth_allow_anonymous_access
+@plugins.toolkit.auth_disallow_anonymous_access
 def resource_view_list(context, data_dict):
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.resource_view_list(context, data_dict)
+    """Implementation of ckan.logic.auth.get.resource_view_list
 
-@plugins.toolkit.auth_allow_anonymous_access
-def tag_list(context, data_dict):
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.tag_list(context, data_dict)
+    - anonymous: disallow
+    - all others: standard behaviour
+    """
+    return ckanget.resource_view_list(context, data_dict)
 
-    # def user_followee_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-    # def user_follower_list(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-    # def config_option_show(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-    # def group_show_rest(context, data_dict):
-    # same as group_show
-
-    # def help_show(context, data_dict):
-    # should be allowed for anonymous, and is only accessed through api anyway
-
-    # def job_show(context, data_dict):
-    # not allowed for anonymous in standard CKAN
-
-@plugins.toolkit.auth_allow_anonymous_access
-def organization_show(context, data_dict):
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.organization_show(context, data_dict)
-
-
-@plugins.toolkit.auth_allow_anonymous_access
-def package_show(context, data_dict):
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.package_show(context, data_dict)
-
-@plugins.toolkit.auth_allow_anonymous_access
-def resource_show(context, data_dict):
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.resource_show(context, data_dict)
-
-@plugins.toolkit.auth_allow_anonymous_access
+@plugins.toolkit.auth_disallow_anonymous_access
 def resource_view_show(context, data_dict):
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.resource_view_show(context, data_dict)
+    """Implementation of ckan.logic.auth.get.resource_view_show
 
-@plugins.toolkit.auth_allow_anonymous_access
-def tag_show(context, data_dict):
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.tag_show(context, data_dict)
+    - everyone: disallow
+    """
+    return ckanget.resource_view_show(context, data_dict)
 
-    # def tag_show_rest(context, data_dict):
-    # same as tag_show
-
-@plugins.toolkit.auth_allow_anonymous_access
-def package_search(context, data_dict):
-    anon_through_api = _anon_access(context)
-    if anon_through_api:
-        return anon_through_api
-    else:
-        return ckanget.package_search(context, data_dict)
-    
 def status_show(context, data_dict):
     """Implementation of ckan.logic.auth.get.status_show
 
@@ -438,6 +241,91 @@ def status_show(context, data_dict):
 
 @plugins.toolkit.auth_disallow_anonymous_access
 def package_collaborator_list(context, data_dict):
-    '''Checks if a user is allowed to list the collaborators from a dataset.
+    '''Checks if a user is allowed to list of collaborators from a dataset.
     '''
     return ckanget.package_collaborator_list(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def package_activity_list(context, data_dict):
+    '''Checks if a user is allowed to see the list of activities from a dataset.
+    '''
+    return ckanget.package_activity_list(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def dataset_follower_count(context, data_dict):
+    '''Checks if a user is allowed to see the number of followers of a dataset.'''
+    return ckanget.dataset_follower_count(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def dataset_followee_count(context, data_dict):
+    '''Checks if a user is allowed to see the number of datasets that are
+      followed by a given user.'''
+    return ckanget.dataset_followee_count(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def followee_count(context, data_dict):
+    '''Checks if a user is allowed to see the number of objects that are
+      followed by a given user.'''
+    return ckanget.followee_count(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def group_followee_count(context, data_dict):
+    '''Checks if a user is allowed to see the number of groups that are
+      followed by a given user.'''
+    return ckanget.group_followee_count(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def user_followee_count(context, data_dict):
+    '''Checks if a user is allowed to see the number of users that are
+      followed by a given user.'''
+    return ckanget.user_followee_count(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def user_follower_count(context, data_dict):
+    '''Checks if a user is allowed to see the number of followers of a user.'''
+    return ckanget.user_follower_count(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def member_list(context, data_dict):
+    '''Checks if a user is allowed to see the list of members a group has.'''
+    return ckanget.member_list(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def group_activity_list(context, data_dict):
+    '''Checks if a user is allowed to see the list of activities from a group.'''
+    return ckanget.group_activity_list(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def format_autocomplete(context, data_dict):
+    '''Checks if a user is allowed to use the autocompletion endpoint for formats.'''
+    return ckanget.format_autocomplete(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def package_autocomplete(context, data_dict):
+    '''Checks if a user is allowed to use the autocompletion endpoint for packages.'''
+    return ckanget.package_autocomplete(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def user_autocomplete(context, data_dict):
+    '''Checks if a user is allowed to use the autocompletion endpoint for users.'''
+    return ckanget.user_autocomplete(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def group_autocomplete(context, data_dict):
+    '''Checks if a user is allowed to use the autocompletion endpoint for groups.'''
+    return ckanget.group_autocomplete(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def organization_autocomplete(context, data_dict):
+    '''Checks if a user is allowed to use the autocompletion endpoint for categories.'''
+    return ckanget.organization_autocomplete(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def organization_activity_list(context, data_dict):
+    '''Checks if a user is allowed to see the activity list of an organization.'''
+    return ckanget.organization_activity_list(context, data_dict)
+
+@plugins.toolkit.auth_disallow_anonymous_access
+def organization_follower_count(context, data_dict):
+    '''Checks if a user is allowed to see the follower count of an organization.'''
+    return ckanget.organization_follower_count(context, data_dict)

@@ -1,5 +1,5 @@
 """Tests for checking if our desired authorization model is indeed what
-what is happening. We try to do a test for each available API function,
+is happening. We try to do a test for each available API function,
 even if we did not change the standard behaviour for this function. This is
 because future releases of CKAN might change the standard behaviour."""
 
@@ -15,40 +15,21 @@ import ckan.tests.helpers as test_helpers
 
 from ckan import model
 
-from ckanext.berlinauth.plugin import _public_pages
-
 PLUGIN_NAME = 'berlinauth'
 LOG = logging.getLogger(__name__)
 
 # The following are action functions that have no corresponding auth
-# functions. Hopefully this will change in a future release of CKAN.
+# functions (yet).
 no_auth_function = {
-    "am_following_dataset",
-    "am_following_group",
-    "am_following_user",
-    "dataset_followee_count",
-    "dataset_follower_count",
     "follow_dataset",
     "follow_group",
     "follow_user",
-    "followee_count",
-    "group_followee_count",
-    "group_follower_count",
-    "group_package_show",
-    "member_list",
-    "organization_follower_count",
-    "recently_changed_packages_activity_list",
-    "resource_search",
     "roles_show",
-    "tag_search",
     "task_status_update_many",
-    "term_translation_show",
     "term_translation_update_many",
     "unfollow_dataset",
     "unfollow_group",
     "unfollow_user",
-    "user_followee_count",
-    "user_follower_count",
 }
 
 parameterless_allowed = {
@@ -78,7 +59,7 @@ parameterless_forbidden = {
     "job_list",
 }
 
-userid_forbidden = {
+user_id_forbidden = {
     "am_following_user",
     "dataset_followee_count",
     "dataset_followee_list",
@@ -96,23 +77,78 @@ userid_forbidden = {
     "user_show",
 }
 
-activityid_forbidden = {
+activity_id_forbidden = {
     "activity_data_show",
     "activity_diff",
     "activity_show",
 }
 
-datasetid_allowed = {
-    "package_activity_list",
+dataset_id_allowed = {
     "package_relationships_list",
+    "package_show", 
 }
 
-datasetid_forbidden = {
+dataset_id_forbidden = {
     "am_following_dataset",
+    "package_activity_list",
     "package_collaborator_list",
     "dataset_follower_count",
     "dataset_follower_list",
 }
+
+group_id_allowed = {
+    "group_follower_count" ,
+    "group_package_show",
+    "group_show",
+}
+
+group_id_forbidden = {
+    "am_following_group" ,
+    "group_activity_list" ,
+    "group_follower_list" ,
+    "member_list" ,
+}
+
+organization_id_allowed = {
+    "organization_show" ,
+}
+
+organization_id_forbidden = {
+    "organization_activity_list" ,
+    "organization_follower_count" ,
+    "organization_follower_list" ,
+}
+
+autocomplete_forbidden = {
+    "format_autocomplete" ,
+    "package_autocomplete" ,
+    "user_autocomplete" ,
+    "group_autocomplete" ,
+    "organization_autocomplete" ,
+}
+
+resource_id_allowed = {
+    'resource_show' ,
+}
+
+resource_id_forbidden = {
+    'resource_view_list' ,
+}
+
+resource_view_id_forbidden = {
+    'resource_view_show' ,
+}
+
+tag_id_allowed = {
+    'tag_show' ,
+}
+
+vocabulary_id_forbidden = {
+    'vocabulary_show'
+}
+
+
+
 
 # @pytest.fixture
 # def group():
@@ -226,7 +262,7 @@ class TestSimpleGetable(object):
 class TestUserFunctions(object):
     '''Tests that check authorization for API functions on user objects.'''
 
-    @pytest.mark.parametrize("function", list(userid_forbidden - no_auth_function))
+    @pytest.mark.parametrize("function", list(user_id_forbidden - no_auth_function))
     def test_anonymous_access_forbidden_userid(self, app, function):
         '''Check that anonymous can access the specified API functions
         with user id parameter.'''
@@ -240,16 +276,16 @@ class TestUserFunctions(object):
 @pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
 @pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
 class TestActivityFunctions(object):
-    '''Tests that check authorization for API functions on activity objects.'''
+    '''Tests that checks authorization for API functions on activity objects.'''
 
     extra_params = {
         "activity_diff": "&object_type=dataset",
         "activity_show": "&include_data=true"
     }
 
-    @pytest.mark.parametrize("function", list(activityid_forbidden - no_auth_function))
+    @pytest.mark.parametrize("function", list(activity_id_forbidden - no_auth_function))
     def test_anonymous_access_forbidden_activityid(self, app, function):
-        '''Check that anonymous can access the specified API functions
+        '''Check that anonymous cannot access the specified API functions
         with an activity id parameter.'''
         user = factories.User()
         org = factories.Organization(user=user)
@@ -272,7 +308,7 @@ class TestActivityFunctions(object):
 class TestDatasetFunctions(object):
     '''Tests that check authorization for API functions on dataset objects.'''
 
-    @pytest.mark.parametrize("function", list(datasetid_allowed - no_auth_function))
+    @pytest.mark.parametrize("function", list(dataset_id_allowed - no_auth_function))
     def test_anonymous_access_allowed_datasetid(self, app, function):
         user = factories.User()
         org = factories.Organization(user=user)
@@ -283,7 +319,7 @@ class TestDatasetFunctions(object):
             status=200
         )
 
-    @pytest.mark.parametrize("function", list(datasetid_forbidden - no_auth_function))
+    @pytest.mark.parametrize("function", list(dataset_id_forbidden - no_auth_function))
     def test_anonymous_access_forbidden_datasetid(self, app, function):
         user = factories.User()
         org = factories.Organization(user=user)
@@ -294,76 +330,222 @@ class TestDatasetFunctions(object):
             status=403
         )
 
-    # def test_user_show_forbidden_for_anonymous(self, app, user):
-    #     '''Check that anonymous cannot show users.'''
-    #     app.get(
-    #         url="/api/3/action/user_show",
-    #         query_string=f"id={user.name}",
-    #         status=403
-    #     )
 
-    # def test_package_show_allowed_for_anonymous(self, app, datasets):
-    #     '''Check that anonymous user can show packages.'''
-    #     app.get(
-    #         url="/api/3/action/package_show",
-    #         query_string=f"id={datasets[0]['name']}",
-    #         status=200
-    #     )
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestGroupFunctions(object):
+    '''Tests that check authorization for API functions on group objects.'''
 
-    # def test_organization_show_allowed_for_anonymous(self, app, org):
-    #     '''Check that anonymous user can show organizations.'''
-    #     app.get(
-    #         url="/api/3/action/organization_show",
-    #         query_string=f"id={org['name']}",
-    #         status=200
-    #     )
-
-    # def test_group_show_allowed_for_anonymous(self, app, group):
-    #     '''Check that anonymous user can show groups.'''
-    #     app.get(
-    #         url="/api/3/action/group_show",
-    #         query_string=f"id={group['name']}",
-    #         status=200
-    #     )
-
-    # def test_tag_show_allowed_for_anonymous(self, app, datasets):
-    #     '''Check that anonymous user can show tags.'''
-    #     app.get(
-    #         url="/api/3/action/tag_show",
-    #         query_string=f"id={datasets[0]['tags'][0]['name']}",
-    #         status=200
-    #     )
-
-    # def test_resource_show_allowed_for_anonymous(self, app, datasets):
-    #     dataset = model.Package.get(datasets[0]['name'])
-    #     resource_id = dataset.resources[0].id
-    #     app.get(
-    #         url="/api/3/action/resource_show",
-    #         query_string=f"id={resource_id}",
-    #         status=200
-    #     )
-
-# # should not work
-# curl -X POST -d '{ "name": "testoburger" }' https://datenregister.stage.berlinonline.net/api/3/action/package_create | jq "."
-
-# # should not work
-# curl -X POST -d '{ "id": "webatlas-berlin-wms" }' https://datenregister.stage.berlinonline.net/api/3/action/package_delete | jq "."
-
-
-class TestStaticPages(object):
-
-    c.config['berlin.public_pages'] = "about"
-
-    @pytest.mark.parametrize("page", _public_pages())
-    def test_anonymous_static_pages_allowed(self, app, page):
+    @pytest.mark.parametrize("function", list(group_id_allowed - no_auth_function))
+    def test_anonymous_access_allowed_group_id(self, app, function):
+        group = factories.Group()
         app.get(
-            url=f"{page}",
+            url=f"/api/3/action/{function}",
+            query_string=f"id={group['id']}",
             status=200
         )
 
-    @pytest.mark.parametrize("page", ["group", "organization"])
-    def test_anonymous_static_pages_forbidden(self, app, page):
+    @pytest.mark.parametrize("function", list(group_id_forbidden - no_auth_function))
+    def test_anonymous_access_forbidden_group_id(self, app, function):
+        group = factories.Group()
         app.get(
-            url=f"/{page}",
+            url=f"/api/3/action/{function}",
+            query_string=f"id={group['id']}",
+            status=403
+        )
+
+
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestOrganizationFunctions(object):
+    '''Tests that check authorization for API functions on organization objects.'''
+
+    @pytest.mark.parametrize("function", list(organization_id_allowed - no_auth_function))
+    def test_anonymous_access_allowed_organization_id(self, app, function):
+        org = factories.Organization()
+        app.get(
+            url=f"/api/3/action/{function}",
+            query_string=f"id={org['id']}",
             status=200
         )
+
+    @pytest.mark.parametrize("function", list(organization_id_forbidden - no_auth_function))
+    def test_anonymous_access_forbidden_organization_id(self, app, function):
+        org = factories.Organization()
+        app.get(
+            url=f"/api/3/action/{function}",
+            query_string=f"id={org['id']}",
+            status=403
+        )
+
+
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestAutocompleteFunctions(object):
+    '''Tests that check authorization for autocomplete API functions.'''
+
+    @pytest.mark.parametrize("function", list(autocomplete_forbidden - no_auth_function))
+    def test_anonymous_access_forbidden_autocomplete(self, app, function):
+        app.get(
+            url=f"/api/3/action/{function}",
+            query_string=f"q=foo",
+            status=403
+        )
+
+
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestResourceFunctions(object):
+    '''Tests that check authorization for API functions on resource objects.'''
+
+    @pytest.mark.parametrize("function", list(resource_id_allowed - no_auth_function))
+    def test_anonymous_access_allowed_resource_id(self, app, function):
+        user = factories.User()
+        organization = factories.Organization(user=user)
+        dataset = factories.Dataset(owner_org=organization["id"])
+        resource = factories.Resource(package_id=dataset["id"])
+        app.get(
+            url=f"/api/3/action/{function}",
+            query_string=f"id={resource['id']}",
+            status=200
+        )
+
+    @pytest.mark.parametrize("function", list(resource_id_forbidden - no_auth_function))
+    def test_anonymous_access_forbidden_resource_id(self, app, function):
+        user = factories.User()
+        organization = factories.Organization(user=user)
+        dataset = factories.Dataset(owner_org=organization["id"])
+        resource = factories.Resource(package_id=dataset["id"])
+        app.get(
+            url=f"/api/3/action/{function}",
+            query_string=f"id={resource['id']}",
+            status=403
+        )
+
+
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME} image_view')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestResourceViewFunctions(object):
+    '''Tests that check authorization for API functions on resource view objects.'''
+
+    @pytest.mark.parametrize("function", list(resource_view_id_forbidden - no_auth_function))
+    def test_anonymous_access_forbidden_resource_view_id(self, app, function):
+        user = factories.User()
+        organization = factories.Organization(user=user)
+        dataset = factories.Dataset(owner_org=organization["id"])
+        resource = factories.Resource(package_id=dataset["id"])
+        resource_view = factories.ResourceView(resource_id=resource["id"])
+        app.get(
+            url=f"/api/3/action/{function}",
+            query_string=f"id={resource_view['id']}",
+            status=403
+        )
+
+
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestTagFunctions(object):
+    '''Tests that check authorization for API functions on tag objects.'''
+
+    @pytest.mark.parametrize("function", list(tag_id_allowed - no_auth_function))
+    def test_anonymous_access_allowed_tag_id(self, app, function):
+        tag = {"name": "my-tag"}
+        user = factories.User()
+        organization = factories.Organization(user=user)
+        factories.Dataset(
+            owner_org=organization["id"],
+            name="dataset-one",
+            title="Dataset One",
+            tags=[tag]
+        )
+        app.get(
+            url=f"/api/3/action/{function}",
+            query_string=f"id={tag['name']}",
+            status=200
+        )
+
+
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestVocabularyFunctions(object):
+    '''Tests that check authorization for API functions on vocabulary objects.'''
+
+    @pytest.mark.parametrize("function", list(vocabulary_id_forbidden - no_auth_function))
+    def test_anonymous_access_forbidden_vocabulary_id(self, app, function):
+        vocab = model.Vocabulary(u'genre')
+        model.Session.add(vocab)
+        sonata_tag = model.Tag(name=u'sonata', vocabulary_id=vocab.id)
+        model.Session.add(sonata_tag)
+        app.get(
+            url=f"/api/3/action/{function}",
+            query_string=f"id={vocab.id}",
+            status=403
+        )
+
+
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestVariousFunctions(object):
+    '''Tests that check authorization for various API functions that don't belong to a group.'''
+
+    def test_anonymous_access_allowed_resource_search(self, app):
+        '''Check that anonymous can call resource_search.'''
+        user = factories.User()
+        organization = factories.Organization(user=user)
+        dataset = factories.Dataset(owner_org=organization["id"])
+        factories.Resource(package_id=dataset["id"], format="XLS")
+        app.get(
+            url="/api/3/action/resource_search",
+            query_string="query=format:XLS",
+            status=200,
+        )
+
+    def test_anonymous_access_allowed_help_show(self, app):
+        '''Check that anonymous can call help_show.'''
+        app.get(
+            url="/api/3/action/help_show",
+            query_string="name=package_list",
+            status=200,
+        )
+
+    def test_anonymous_access_forbidden_config_option_show(self, app):
+        '''Check that anonymous cannot call config_option_show.'''
+        app.get(
+            url="/api/3/action/config_option_show",
+            query_string="key=ckan.site_title",
+            status=403,
+        )
+
+    def test_anonymous_access_allowed_term_translation_show(self, app):
+        '''Check that anonymous can call term_translation_show.'''
+        app.get(
+            url="/api/3/action/term_translation_show",
+            query_string="terms=fuel",
+            status=200
+        )
+
+    def test_anonymous_access_forbidden_api_token_list(self, app):
+        '''Check that anonymous cannot call api_token_list.'''
+        app.get(
+            url="/api/3/action/api_token_list",
+            query_string="user=foo",
+            status=403,
+        )
+
+    def test_anonymous_access_forbidden_task_status_show(self, app):
+        '''Check that anonymous cannot call task_status_show.'''
+        app.get(
+            url="/api/3/action/task_status_show",
+            query_string="id=foo",
+            status=403,
+        )
+
+    def test_anonymous_access_forbidden_job_show(self, app):
+        '''Check that anonymous cannot call job_show.'''
+        app.get(
+            url="/api/3/action/job_show",
+            query_string="id=foo",
+            status=403,
+        )
+
+

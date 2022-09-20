@@ -3,15 +3,17 @@
 Berlin Open Data Portal.
 """
 
+import logging
+
 import ckan.plugins as plugins
-import ckan.common as c
 import ckanext.berlinauth.auth.get as auth_get
 import ckanext.berlinauth.auth.create as auth_create
 import ckanext.berlinauth.action.get as action_get
 
-def _public_pages():
-    public_paths = c.config.get("berlin.public_pages", "").split()
-    return [f"/{path}" for path in public_paths]
+from ckanext.berlinauth.auth_middleware import AuthMiddleware
+
+LOG = logging.getLogger(__name__)
+
 
 class BerlinauthPlugin(plugins.SingletonPlugin):
     """Main plugin class.
@@ -19,6 +21,7 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer, inherit=False)
     plugins.implements(plugins.IAuthFunctions)
     plugins.implements(plugins.IActions)
+    plugins.implements(plugins.IMiddleware, inherit=True)
 
     # -------------------------------------------------------------------
     # Implementation IConfigurer
@@ -58,35 +61,40 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
         """
         return {
             # get
-            'site_read': auth_get.site_read ,
             'group_revision_list': auth_get.group_revision_list ,
             'member_roles_list': auth_get.member_roles_list ,
-            'organization_list': auth_get.organization_list ,
-            'organization_list_for_user': auth_get.organization_list_for_user ,
             'organization_revision_list': auth_get.organization_revision_list ,
             'package_revision_list': auth_get.package_revision_list ,
             'revision_list': auth_get.revision_list ,
             'user_list': auth_get.user_list ,
-            'vocabulary_list': auth_get.vocabulary_list ,
             'group_show': auth_get.group_show ,
             'resource_status_show': auth_get.resource_status_show ,
             'revision_show': auth_get.revision_show ,
             'task_status_show': auth_get.task_status_show ,
             'user_show': auth_get.user_show ,
             'vocabulary_show': auth_get.vocabulary_show ,
-            'package_show': auth_get.package_show ,
-            'group_list': auth_get.group_list ,
-            'license_list': auth_get.license_list ,
-            'package_list': auth_get.package_list ,
             'resource_view_list': auth_get.resource_view_list ,
-            'tag_list': auth_get.tag_list ,
-            'organization_show': auth_get.organization_show ,
-            'resource_show': auth_get.resource_show ,
             'resource_view_show': auth_get.resource_view_show ,
-            'tag_show': auth_get.tag_show ,
-            'package_search': auth_get.package_search ,
             'status_show': auth_get.status_show ,
             'package_collaborator_list': auth_get.package_collaborator_list ,
+            'dataset_follower_count': auth_get.dataset_follower_count ,
+            'package_activity_list': auth_get.package_activity_list ,
+            'user_follower_count': auth_get.user_follower_count ,
+            'user_followee_count': auth_get.user_followee_count ,
+            'group_followee_count': auth_get.group_followee_count ,
+            'dataset_followee_count': auth_get.dataset_followee_count ,
+            'followee_count': auth_get.followee_count ,
+            'group_activity_list': auth_get.group_activity_list ,
+            'member_list': auth_get.member_list ,
+            'vocabulary_list': auth_get.vocabulary_list ,
+            'organization_list_for_user': auth_get.organization_list_for_user ,
+            'format_autocomplete': auth_get.format_autocomplete ,
+            'package_autocomplete': auth_get.package_autocomplete ,
+            'user_autocomplete': auth_get.user_autocomplete ,
+            'group_autocomplete': auth_get.group_autocomplete ,
+            'organization_autocomplete': auth_get.organization_autocomplete ,
+            'organization_activity_list': auth_get.organization_activity_list ,
+            'organization_follower_count': auth_get.organization_follower_count ,
 
             # create
             'rating_create': auth_create.rating_create ,
@@ -111,3 +119,10 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
             'organization_show': action_get.organization_show ,
             'organization_list': action_get.organization_list ,
         }
+
+    # -------------------------------------------------------------------
+    # Implementation IMiddleWare
+    # -------------------------------------------------------------------
+
+    def make_middleware(self, app, config):
+        return AuthMiddleware(app, config)
