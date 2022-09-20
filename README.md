@@ -10,6 +10,7 @@ The plugin implements the following CKAN interfaces:
 
 - [IAuthFunctions](http://docs.ckan.org/en/latest/extensions/plugin-interfaces.html#ckan.plugins.interfaces.IAuthFunctions)
 - [IActions](http://docs.ckan.org/en/latest/extensions/plugin-interfaces.html#ckan.plugins.interfaces.IActions)
+- [IMiddleware](http://docs.ckan.org/en/latest/extensions/plugin-interfaces.html#ckan.plugins.interfaces.IMiddleware)
 
 ## Requirements
 
@@ -24,9 +25,9 @@ Only `auth.get` and `auth.create` functions have been implemented, as the standa
 
 The general authorization model is as follows:
 
-- no anonymous access to the website (https://datenregister.berlin.de)
-- anonymous access to a subset of the API
-- restricted access for logged-in users (administrative staff and select others)
+- Anonymous users have no access to the website (https://datenregister.berlin.de), except for the `/about` and `/datenschutzerklaerung`. All requests are redirected to the login page.
+- Anonymous access to a subset of the CKAN API (most GET-able functions) and the DCAT API.
+- Logged-in users have restricted access to site and API.
 
   - no user list/show (except for self)
   - no vocabulary list/show
