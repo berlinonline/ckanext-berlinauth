@@ -8,7 +8,7 @@ import ckan.logic.action.get as ckanget
 import ckan.common as c
 from ckan.plugins.toolkit import asbool
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 @ckan.logic.side_effect_free
 def organization_list(context, data_dict):
