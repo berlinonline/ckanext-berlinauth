@@ -14,34 +14,38 @@ import ckan.tests.helpers as test_helpers
 
 from ckan import model
 
-from ckanext.berlinauth.auth_middleware import USER_PROCESS_PAGES, public_pages
+from ckanext.berlinauth.auth_middleware import USER_PROCESS_PAGES
 
 PLUGIN_NAME = 'berlinauth'
 LOG = logging.getLogger(__name__)
+PUBLIC_PAGES = ['about']
+DCAT_EXTENSIONS = ['ttl', 'rdf', 'jsonld']
 
 @pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
 @pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
 class TestAnonymousAccess(object):
     
-    c.config['berlin.public_pages'] = "about"
-    
-    @pytest.mark.parametrize("page", public_pages())
+    @classmethod
+    def setup_class(cls):
+        c.config['berlin.public_pages'] = " ".join(PUBLIC_PAGES)
+
+    @pytest.mark.parametrize("page", PUBLIC_PAGES)
     def test_anonymous_public_pages_allowed(self, app, page):
         '''Test that anonymous can see pages that are configured as public
            pages.'''
         app.get(
-            url=f"{page}",
+            url=f"/{page}",
             status=200,
             follow_redirects=False,
         )
 
-    @pytest.mark.parametrize("page", public_pages())
+    @pytest.mark.parametrize("page", PUBLIC_PAGES)
     def test_anonymous_non_public_pages_forbidden(self, app, page):
         '''Test that anonymous cannot see pages that are not configured as public
            pages.'''
         c.config['berlin.public_pages'] = ""
         app.get(
-            url=f"{page}",
+            url=f"/{page}",
             status=307,
             follow_redirects=False,
         )
@@ -99,9 +103,8 @@ class TestAnonymousAssetAccess(object):
 
 @pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME} dcat')
 @pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+@pytest.mark.ckan_config('ckanext.dcatde_berlin.formats', ' '.join(DCAT_EXTENSIONS))
 class TestAnonymousDCATAccess(object):
-
-    c.config['ckanext.dcatde_berlin.formats'] = "rdf ttl jsonld"
 
     def test_registered_catalog_allowed(self, app):
         '''Test that anonymous can access the DCAT extension's catalog endpoint with
