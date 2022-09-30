@@ -52,7 +52,7 @@ class TestAnonymousAccess(object):
 
     def test_api_allowed(self, app):
         '''Test that the API is reachable for anonymous in general. For more detailed
-           tests for different API methods see test_plugin.py.'''
+           tests for different API methods see test_auth_get.py.'''
         app.get(
             url="/api/3/action/package_list",
             status=200,
