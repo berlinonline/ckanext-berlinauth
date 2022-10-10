@@ -36,12 +36,14 @@ def _filter_group_show(context, group_dict):
     allowed to see:
 
     - logged_in: only self
+    - group admin: all
     - sysadmin: all
     """
+    from ckan.authz import has_user_permission_for_group_or_org
     current_user = context.get('auth_user_obj', None)
     if not current_user:
         group_dict.pop('users', None)
-    elif not current_user.sysadmin:
+    elif not has_user_permission_for_group_or_org(group_dict['id'], current_user.name, 'admin'):
         users = group_dict.get('users', [])
         users = [x for x in users if x['name'] == current_user.name]
         group_dict['users'] = users

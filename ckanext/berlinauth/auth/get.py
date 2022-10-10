@@ -5,6 +5,7 @@
 import logging
 import re
 
+from ckan.authz import has_user_permission_for_group_or_org
 import ckan.plugins as plugins
 import ckan.logic.auth.get as ckanget
 import ckan.common as c
@@ -177,7 +178,8 @@ def resource_view_list(context, data_dict):
 def resource_view_show(context, data_dict):
     """Implementation of ckan.logic.auth.get.resource_view_show
 
-    - everyone: disallow
+    - anonymous: disallow
+    - all others: standard behaviour
     """
     return ckanget.resource_view_show(context, data_dict)
 
@@ -240,12 +242,28 @@ def user_follower_count(context, data_dict):
 @plugins.toolkit.auth_disallow_anonymous_access
 def member_list(context, data_dict):
     '''Checks if a user is allowed to see the list of members a group has.'''
-    return ckanget.member_list(context, data_dict)
+    requester = context.get('user', None)
+    group_id = data_dict.get('id', None)
+    if group_id and has_user_permission_for_group_or_org(group_id, requester, 'admin'):
+        return ckanget.member_list(context, data_dict)
+    else:
+        return {
+            'success': False,
+            'msg': f"You are not authorized to perform the member_list action on the group '{group_id}'."
+        }
 
 @plugins.toolkit.auth_disallow_anonymous_access
 def group_activity_list(context, data_dict):
     '''Checks if a user is allowed to see the list of activities from a group.'''
-    return ckanget.group_activity_list(context, data_dict)
+    requester = context.get('user', None)
+    group_id = data_dict.get('id', None)
+    if group_id and has_user_permission_for_group_or_org(group_id, requester, 'admin'):
+        return ckanget.group_activity_list(context, data_dict)
+    else:
+        return {
+            'success': False,
+            'msg': f"You are not authorized to perform the group_activity_list action on the group '{group_id}'."
+        }
 
 @plugins.toolkit.auth_disallow_anonymous_access
 def format_autocomplete(context, data_dict):
@@ -275,7 +293,15 @@ def organization_autocomplete(context, data_dict):
 @plugins.toolkit.auth_disallow_anonymous_access
 def organization_activity_list(context, data_dict):
     '''Checks if a user is allowed to see the activity list of an organization.'''
-    return ckanget.organization_activity_list(context, data_dict)
+    requester = context.get('user', None)
+    org_id = data_dict.get('id', None)
+    if org_id and has_user_permission_for_group_or_org(org_id, requester, 'admin'):
+        return ckanget.organization_activity_list(context, data_dict)
+    else:
+        return {
+            'success': False,
+            'msg': f"You are not authorized to perform the organization_activity_list action on the group '{org_id}'."
+        }
 
 @plugins.toolkit.auth_disallow_anonymous_access
 def organization_follower_count(context, data_dict):
