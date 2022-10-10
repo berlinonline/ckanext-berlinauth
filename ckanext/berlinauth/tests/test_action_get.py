@@ -38,7 +38,6 @@ def org_with_users(app, sysadmin):
             extra_environ={'Authorization': sysadmin['apikey']},
         )
     
-    for role, user in users.items():
         member = {
             'username': user['name'],
             'role': role,
@@ -88,7 +87,9 @@ class TestOrganizationList(object):
         result = data['result']
         assert technical_name not in [org['name'] for org in result]
 
-    @pytest.mark.skip(reason="doesn't work due to bug in CKAN core")
+    # TODO: skip the following because of CKAN core's missing auth_user_obj bug:
+    # not currently skipped because we temporarily allow organization_list_for_user for anonymous while this bug isn't fixed
+    # @pytest.mark.skip(reason="doesn't work due to bug in CKAN core")
     def test_technical_group_excluded_for_regular(self, app):
         '''Test that organizations specified as 'technical' are not returned by 
            `organization_list` for regular logged-in users.'''
@@ -147,7 +148,9 @@ class TestOrganizationShow(object):
         # also return the site_user
         assert set(expected_names).issubset(set(member_names))
 
-    @pytest.mark.skip(reason="doesn't work due to bug in CKAN core")
+    # TODO: skip the following because of CKAN core's missing auth_user_obj bug:
+    # not currently skipped because we temporarily allow organization_list_for_user for anonymous while this bug isn't fixed
+    # @pytest.mark.skip(reason="doesn't work due to bug in CKAN core")
     def test_org_admin_can_see_all_users(self, app, org_with_users):
         '''Check that an org's admin can see all of its members.'''
 
@@ -166,7 +169,9 @@ class TestOrganizationShow(object):
         # also return the site_user
         assert set(expected_names).issubset(set(member_names))
 
-    @pytest.mark.skip(reason="doesn't work due to bug in CKAN core")
+    # TODO: skip the following because of CKAN core's missing auth_user_obj bug:
+    # not currently skipped because we temporarily allow organization_list_for_user for anonymous while this bug isn't fixed
+    # @pytest.mark.skip(reason="doesn't work due to bug in CKAN core")
     def test_regular_member_can_only_see_self(self, app, org_with_users):
         '''Check that a regular org member can only see themselves as a member.'''
 

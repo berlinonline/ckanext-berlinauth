@@ -30,11 +30,11 @@ def member_roles_list(context, data_dict):
     }
 
 
-@plugins.toolkit.auth_disallow_anonymous_access
+@plugins.toolkit.auth_allow_anonymous_access
 def organization_list_for_user(context, data_dict):
     """Implementation of ckan.logic.auth.get.organization_list_for_user
 
-    - anonymous: disallow
+    - anonymous: disallow (TODO: temporarily allowed because of CKAN core's missing auth_user_obj bug)
     - all others: standard behaviour
     """
     return ckanget.organization_list_for_user(context, data_dict)
