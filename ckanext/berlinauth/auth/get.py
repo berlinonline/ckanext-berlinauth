@@ -19,17 +19,6 @@ LOG = logging.getLogger(__name__)
 # xyz_list functions:
 # egrep "def ([a-z_]+?_list(_[a-z_]+?)?)\(" ckan/logic/auth/get.py | sort | uniq
 
-def group_revision_list(context, data_dict):
-    """Implementation of ckan.logic.auth.get.group_revision_list
-
-    - everyone: disallow (revisions can only be seen by sysadmin)
-    """
-    return {
-        'success': False,
-        'msg': 'You are not authorized to perform the group_revision_list action.'
-    }
-
-
 def member_roles_list(context, data_dict):
     """Implementation of ckan.logic.auth.get.member_roles_list
 
@@ -49,39 +38,6 @@ def organization_list_for_user(context, data_dict):
     - all others: standard behaviour
     """
     return ckanget.organization_list_for_user(context, data_dict)
-
-
-def organization_revision_list(context, data_dict):
-    """Implementation of ckan.logic.auth.get.organization_revision_list
-
-    - everyone: disallow (revisions can only be seen by sysadmin)
-    """
-    return {
-        'success': False,
-        'msg': 'You are not authorized to perform the organization_revision_list action.'
-    }
-
-
-def package_revision_list(context, data_dict):
-    """Implementation of ckan.logic.auth.get.package_revision_list
-
-    - everyone: disallow
-    """
-    return {
-        'success': False,
-        'msg': 'You are not authorized to perform the package_revision_list action.'
-    }
-
-
-def revision_list(context, data_dict):
-    """Implementation of ckan.logic.auth.get.revision_list
-
-    - everyone: disallow (revisions can only be seen by sysadmin)
-    """
-    return {
-        'success': False,
-        'msg': 'You are not authorized to perform the revision_list action.'
-    }
 
 
 def user_list(context, data_dict):
@@ -134,21 +90,6 @@ def group_show(context, data_dict):
         return { 'success': False }
     else:
         return { 'success': True }
-
-def resource_status_show(context, data_dict):
-    """Implementation of ckan.logic.auth.get.resource_status_show
-
-      - everyone: disallow (method is deprecated)
-    """
-    return { 'success': False , 'msg': 'resource_status_show is deprecated'}
-
-
-def revision_show(context, data_dict):
-    """Implementation of ckan.logic.auth.get.revision_show
-
-    - everyone: disallow (revisions can only be seen by sysadmin)
-    """
-    return { 'success': False, 'msg': 'You are not authorized to perform the revision_show action.'}
 
 @plugins.toolkit.auth_disallow_anonymous_access
 def task_status_show(context, data_dict):

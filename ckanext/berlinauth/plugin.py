@@ -61,15 +61,9 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
         """
         return {
             # get
-            'group_revision_list': auth_get.group_revision_list ,
             'member_roles_list': auth_get.member_roles_list ,
-            'organization_revision_list': auth_get.organization_revision_list ,
-            'package_revision_list': auth_get.package_revision_list ,
-            'revision_list': auth_get.revision_list ,
             'user_list': auth_get.user_list ,
             'group_show': auth_get.group_show ,
-            'resource_status_show': auth_get.resource_status_show ,
-            'revision_show': auth_get.revision_show ,
             'task_status_show': auth_get.task_status_show ,
             'user_show': auth_get.user_show ,
             'vocabulary_show': auth_get.vocabulary_show ,
