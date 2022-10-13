@@ -12,6 +12,8 @@ import ckan.tests.factories as factories
 
 from ckan import model
 
+from ckanext.berlinauth.tests import sysadmin, org_with_users
+
 PLUGIN_NAME = 'berlinauth'
 LOG = logging.getLogger(__name__)
 
