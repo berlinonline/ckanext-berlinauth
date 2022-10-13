@@ -8,6 +8,7 @@ import logging
 import ckan.plugins as plugins
 import ckanext.berlinauth.auth.get as auth_get
 import ckanext.berlinauth.auth.create as auth_create
+import ckanext.berlinauth.auth.update as auth_update
 import ckanext.berlinauth.action.get as action_get
 
 from ckanext.berlinauth.auth_middleware import AuthMiddleware
@@ -46,6 +47,7 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
         config['ckan.auth.create_user_via_web'] = False
         config['ckan.auth.allow_dataset_collaborators'] = True
         config['ckan.auth.roles_that_cascade_to_sub_groups'] = 'admin'
+        config['ckan.auth.public_activity_stream_detail'] = False
 
         config['berlin.technical_groups'] = \
             "simplesearch harvester-fis-broker harvester-stromnetz-berlin"
@@ -91,12 +93,13 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
             'organization_follower_count': auth_get.organization_follower_count ,
 
             # create
-            'rating_create': auth_create.rating_create ,
-            'user_create': auth_create.user_create ,
+            # the auth function for rating_create is not currently used in CKAN core
+            # 'rating_create': auth_create.rating_create ,
+            'resource_create': auth_create.resource_create ,
 
-            # update, path, delete: nothing to do, this
-            # is all fine in standard CKAN / covered by
-            # ckan.auth settings
+            # update
+            'resource_update': auth_update.resource_update ,
+
         }
 
     # -------------------------------------------------------------------

@@ -6,31 +6,32 @@
 import logging
 import ckan.logic.auth.create as ckancreate
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
-def rating_create(context, data_dict):
-    """Implementation of ckan.logic.auth.create.rating_create
+def resource_create(context, data_dict):
+    '''Implementation of ckan.logic.auth.update.resource_create
+    
+    - everyone (except sysadmins): disallow file uploads
+    '''
+    if 'upload' in data_dict:
+        return {
+            'success': False,
+            'msg': "File upload is disabled."
+        }
+    else:
+        return ckancreate.resource_create(context, data_dict)
 
-    - everyone: disallow
+# def rating_create(context, data_dict):
+#     """Implementation of ckan.logic.auth.create.rating_create
 
-    This is dead code, as ckan.logic.action.create.rating_create never
-    calls this. WTF?
-    """
-    return {'success': False, 'msg': 'create_rating is not supported.'}
+#     - everyone: disallow
 
-
-def user_create(context, data_dict=None):
-    """Implementation of ckan.logic.auth.create.user_create
-
-    - anonymous: disallow
-    - all others: standard behaviour
-
-    Also handled by settings:
-    - ckan.auth.create_user_via_api
-    - ckan.auth.create_user_via_web
-    """
-    return ckancreate.user_create(context, data_dict)
+#     This is dead code, as ckan.logic.action.create.rating_create never
+#     calls this. WTF?
+#     TODO: submit a PR for this?
+#     """
+#     return {'success': False, 'msg': 'create_rating is not supported.'}
 
 
 # Functions in ckan.logic.auth.create not implemented here
@@ -92,6 +93,9 @@ def user_create(context, data_dict=None):
 
     # def vocabulary_create(context, data_dict):
     # only allowed for sysadmin in standard CKAN
+
+    # def user_create
+    # handled by settings
 
 # Other functions from ckan.logic.auth.create
 
