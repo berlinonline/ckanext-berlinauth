@@ -104,7 +104,6 @@ def task_status_show(context, data_dict):
     }
 
 
-@plugins.toolkit.auth_allow_anonymous_access
 def user_show(context, data_dict):
     """Implementation of ckan.logic.auth.get.user_show
 
@@ -112,42 +111,19 @@ def user_show(context, data_dict):
     - sysadmin: can see everyone
     """
 
-    # anonymous can call do user_show when coming from
-    # /user/reset - otherwise resetting passwords is 
-    # not possible
-    if authz.auth_is_anon_user(context):
-        if (c.request.path == "/user/reset"):
-            return { 'success': True }
-        else:
-            return {
-                'success': False ,
-                'msg': 'Site access requires an authenticated user.'
-            }
-
     model = context['model']
 
     _id = data_dict.get('id', None)
-    provided_user = data_dict.get('user_obj', None)
     if _id:
         user_obj = model.User.get(_id)
-    elif provided_user:
-        user_obj = provided_user
-    else:
-        raise logic.NotFound
 
-    requester = context.get('user', None)
-    sysadmin = False
-    if requester:
-        sysadmin = authz.is_sysadmin(requester)
-        requester_looking_at_own_account = requester == user_obj.name
-        path = c.request.path
-        if (sysadmin or requester_looking_at_own_account or path.startswith("/user/reset/")):
-            return { 'success': True }
-        else:
-            return {
-                'success': False ,
-                'msg': 'You are only authorized to see your own user details.'
-            }
+    if not user_obj:
+        return ckanget.user_show(context, data_dict)
+
+    requester = context.get('user')
+    requester_looking_at_own_account = requester == user_obj.name
+    if requester_looking_at_own_account:
+        return { 'success': True }
     else:
         return {
             'success': False ,
