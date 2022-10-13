@@ -4,6 +4,7 @@ even if we did not change the standard behaviour for this function. This is
 because future releases of CKAN might change the standard behaviour."""
 
 import copy
+import json
 import logging
 import pytest
 
@@ -411,6 +412,40 @@ class TestUserFunctions(object):
             status=403
         )
 
+    def test_user_show_unknown_id(self, app):
+        '''Check that calling user_show with a non-existing id parameter leads to a
+        404 Not Found error.'''
+        looker = factories.User()
+        app.get(
+            url="/api/3/action/user_show",
+            query_string="id=hurtz",
+            extra_environ={'Authorization': looker['apikey']},
+            status=404
+        )
+
+    def test_user_can_only_see_self(self, app):
+        '''Check that a user can only see their own details with
+        user_show.'''
+        looker = factories.User()
+        lookee = factories.User()
+        app.get(
+            url="/api/3/action/user_show",
+            query_string=f"id={lookee['id']}",
+            extra_environ={'Authorization': looker['apikey']},
+            status=403
+        )
+
+    def test_user_can_only_see_own_activities(self, app):
+        '''Check that a user can only see their own activities with
+        user_activity_list.'''
+        looker = factories.User()
+        lookee = factories.User()
+        app.get(
+            url="/api/3/action/user_activity_list",
+            query_string=f"id={lookee['id']}",
+            extra_environ={'Authorization': looker['apikey']},
+            status=403
+        )
 
 @pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
 @pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
@@ -561,7 +596,7 @@ class TestGroupFunctions(object):
             status=403
         )
 
-    def test_only_sysadmin_see_technical_orgs(self, app):
+    def test_only_sysadmin_see_technical_orgs(self, app, sysadmin):
         '''Check that only sysadmins can see groups (or orgs) that have been defined
            as 'technical'.'''
         technical_groups = c.config.get("berlin.technical_groups", "").split(" ")
@@ -581,12 +616,31 @@ class TestGroupFunctions(object):
             status=403
         )
         
-        sysadmin = factories.Sysadmin(name='theadmin')
         app.get(
             url='/api/3/action/organization_show',
             query_string=f'id={technical_name}',
             extra_environ={'Authorization': sysadmin['apikey']},
             status=200
+        )
+
+    def test_groupadmin_can_see_group_members(self, app, org_with_users):
+        '''Check that a group's admin can call member_list on that group..'''
+        admin = org_with_users['users']['admin']
+        response = app.get(
+            url='/api/3/action/member_list',
+            query_string=f"id={org_with_users['group']['name']}",
+            extra_environ={'Authorization': admin['apikey']},
+            status=200,
+        )
+
+    def test_groupadmin_can_see_group_activities(self, app, org_with_users):
+        '''Check that a group's admin can call group_activity_list on that group.'''
+        admin = org_with_users['users']['admin']
+        response = app.get(
+            url='/api/3/action/group_activity_list',
+            query_string=f"id={org_with_users['group']['name']}",
+            extra_environ={'Authorization': admin['apikey']},
+            status=200,
         )
 
 
@@ -633,6 +687,16 @@ class TestOrganizationFunctions(object):
             query_string=f"id={org['id']}",
             extra_environ={'Authorization': user['apikey']},
             status=403
+        )
+
+    def test_orgadmin_can_see_org_activities(self, app, org_with_users):
+        '''Check that an org's admin can call organization_activity_list on that org.'''
+        admin = org_with_users['users']['admin']
+        response = app.get(
+            url='/api/3/action/organization_activity_list',
+            query_string=f"id={org_with_users['organization']['name']}",
+            extra_environ={'Authorization': admin['apikey']},
+            status=200,
         )
 
 
@@ -872,10 +936,24 @@ class TestVariousFunctions(object):
 
     def test_anonymous_access_forbidden_task_status_show(self, app):
         '''Check that anonymous cannot call task_status_show.'''
+        # we don't need to have an actual task, because the auth check is
+        # done before validating the input
         app.get(
             url="/api/3/action/task_status_show",
             query_string="id=foo",
             status=403,
+        )
+
+    def test_logged_in_access_forbidden_task_status_show(self, app):
+        '''Check that anonymous cannot call task_status_show.'''
+        # we don't need to have an actual task, because the auth check is
+        # done before validating the input
+        user = factories.User()
+        app.get(
+            url="/api/3/action/task_status_show",
+            query_string="id=foo",
+            status=403,
+            extra_environ={'Authorization': user['apikey']},
         )
 
     def test_anonymous_access_forbidden_job_show(self, app):
