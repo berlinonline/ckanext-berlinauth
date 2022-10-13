@@ -57,6 +57,10 @@ jobs:
         # Install ckanext-berlintheme
         git clone https://github.com/berlinonline/ckanext-berlintheme
         pip install -e ckanext-berlintheme
+        # Install ckanext-berlin_dataset_schema
+        git clone https://github.com/berlinonline/berlin_dataset_schema
+        pip install -e ckanext-berlin_dataset_schema
+        pip install -r ckanext-berlin_dataset_schema/requirements.txt
         # Install ckanext-dcat
         git clone https://github.com/ckan/ckanext-dcat
         pip install -e ckanext-dcat
