@@ -57,6 +57,10 @@ jobs:
         # Install ckanext-berlintheme
         git clone https://github.com/berlinonline/ckanext-berlintheme
         pip install -e ckanext-berlintheme
+        # Install ckanext-dcat
+        git clone https://github.com/ckan/ckanext-dcat
+        pip install -e ckanext-dcat
+        pip install -r ckanext-dcat/requirements.txt
     - name: Setup extension (CKAN >= 2.9)
       run: |
         ckan -c test.ini db init
