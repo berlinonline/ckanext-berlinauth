@@ -5,6 +5,7 @@
 
 This plugin belongs to a set of plugins for the _Datenregister_ – the non-public [CKAN](https://ckan.org) instance that is part of Berlin's open data portal [daten.berlin.de](https://daten.berlin.de).
 `ckanext-berlinauth` provides a custom authorization model.
+Among other things, access for anonymous users is restricted, file upload is deactivated
 
 The plugin implements the following CKAN interfaces:
 
@@ -21,19 +22,17 @@ This plugin has been tested with CKAN 2.9.5 (which requires Python 3).
 "Register-mode" is the implementation for the use case where we have CKAN as a separate "backend" system, only accessible to administrative staff who add and manage datasets.
 In this scenario, CKAN is called the "Datenregister".
 
-Only `auth.get` and `auth.create` functions have been implemented, as the standard CKAN authorization model in combination with the `ckan.auth` config options is fine for update, patch and delete.
-
 The general authorization model is as follows:
 
 - Anonymous users have no access to the website (https://datenregister.berlin.de), except for the `/about` and `/datenschutzerklaerung`. All requests are redirected to the login page.
-- Anonymous access to a subset of the CKAN API (most GET-able functions) and the DCAT API.
+- Anonymous has access to a subset of the CKAN API (most GET-able functions) and the DCAT API.
 - Logged-in users have restricted access to site and API.
-
   - no user list/show (except for self)
   - no vocabulary list/show
   - hide certain groups from `group_list`, `organization_list`
   - hide users except self from `group_show`, `organization_show`
-  - ... 
+  - ...
+- File upload has been disabled.
 
 ## Additional Configuration Options
 
