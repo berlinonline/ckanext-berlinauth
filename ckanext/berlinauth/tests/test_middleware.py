@@ -21,7 +21,7 @@ LOG = logging.getLogger(__name__)
 PUBLIC_PAGES = ['about']
 DCAT_EXTENSIONS = ['ttl', 'rdf', 'jsonld']
 
-@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME} berlintheme')
 @pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
 class TestAnonymousAccess(object):
     
