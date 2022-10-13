@@ -107,7 +107,7 @@ class TestOrganizationShow(object):
     # TODO: skip the following because of CKAN core's missing auth_user_obj bug:
     # not currently skipped because we temporarily allow organization_list_for_user for anonymous while this bug isn't fixed
     # @pytest.mark.skip(reason="doesn't work due to bug in CKAN core")
-    def test_org_admin_can_see_all_users(self, app, org_with_users):
+    def test_org_admin_can_see_all_members(self, app, org_with_users):
         '''Check that an org's admin can see all of its members.'''
 
         group_admin = org_with_users['users']['admin']
