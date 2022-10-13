@@ -2,6 +2,10 @@
 
 ## Development
 
+## [0.2.0](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.0)
+
+_(2022-10-13)_
+
 - Convert to Python 3.
 - Add `berlin.public_pages` config setting to define pages that can be accessed by anonymous users (all other pages require login).
 - Update README.
