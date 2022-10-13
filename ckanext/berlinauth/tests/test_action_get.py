@@ -7,6 +7,8 @@ from flask import Flask
 import ckan.common as c
 import ckan.tests.factories as factories
 
+from ckanext.berlinauth.tests import sysadmin, org_with_users
+
 flask_app = Flask(__name__)
 PLUGIN_NAME = 'berlinauth'
 LOG = logging.getLogger(__name__)
