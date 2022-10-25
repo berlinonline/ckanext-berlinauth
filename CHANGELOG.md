@@ -2,6 +2,12 @@
 
 ## Development
 
+## [0.2.1](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.1)
+
+_(2022-10-25)_
+
+- Change codecov upload in github CI, now using the recommended approach as defined in https://docs.codecov.com/docs#step-4-upload-coverage-reports-to-codecov.
+
 ## [0.2.0](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.0)
 
 _(2022-10-13)_

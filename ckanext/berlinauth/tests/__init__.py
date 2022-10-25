@@ -1,7 +1,6 @@
 import pytest
 import ckan.tests.factories as factories
 
-
 @pytest.fixture
 def sysadmin():
     '''Fixture to create a sysadmin user.'''
