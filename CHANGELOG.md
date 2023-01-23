@@ -2,6 +2,13 @@
 
 ## Development
 
+## [0.2.2](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.2)
+
+_(2023-01-23)_
+
+- Add documentation about configuring monitoring services.
+- Small adjustment to `MANIFEST.in`.
+
 ## [0.2.1](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.1)
 
 _(2022-10-25)_

@@ -34,6 +34,12 @@ The general authorization model is as follows:
   - ...
 - File upload has been disabled.
 
+## Monitoring, Liveness and Readiness Probes
+
+The fact that the home page (`/`) is no longer available to anonymous users has implications for monitoring services such as liveness and readiness probes in Kubernetes.
+If `ckanext-berlinauth` is installed and activated, such services should not point to the home page, but instead to a page that is available to anonymous users as well.
+A good candidate is the info page at `/about`.
+
 ## Additional Configuration Options
 
 - `berlin.technical_groups`:
