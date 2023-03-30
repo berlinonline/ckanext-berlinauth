@@ -964,7 +964,7 @@ class TestVariousFunctions(object):
         )
 
 
-@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME} berlintheme')
 @pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
 class TestOther(object):
     '''Other tests that relate to authorization.'''
