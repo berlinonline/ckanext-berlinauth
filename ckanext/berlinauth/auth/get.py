@@ -110,7 +110,7 @@ def user_show(context, data_dict):
     - everyone: only allow to see self
     - sysadmin: can see everyone
     """
-
+    user_obj = None
     model = context['model']
 
     _id = data_dict.get('id', None)
