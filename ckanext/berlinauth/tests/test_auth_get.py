@@ -4,7 +4,6 @@ even if we did not change the standard behaviour for this function. This is
 because future releases of CKAN might change the standard behaviour."""
 
 import copy
-import json
 import logging
 import pytest
 
@@ -964,4 +963,30 @@ class TestVariousFunctions(object):
             status=403,
         )
 
+
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestOther(object):
+    '''Other tests that relate to authorization.'''
+
+    def test_user_login(self, app):
+        """
+        We have changed the auth method user_show(), so let's test if
+        the regular login process still works (by default login redirects to user's
+        personal dashboard).
+        """
+        # make a user
+        password = "RandomPassword123"
+        user = factories.User(password=password)
+
+        # get the form
+        response = app.post(
+            "/login_generic?came_from=/user/logged_in",
+            data={
+                "login": user["name"],
+                "password": "RandomPassword123",
+            },
+            status=200,
+            follow_redirects=True,
+        )
 
