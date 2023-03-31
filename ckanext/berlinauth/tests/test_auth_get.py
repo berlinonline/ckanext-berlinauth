@@ -8,6 +8,7 @@ import logging
 import pytest
 
 import ckan.common as c
+from ckan.tests.helpers import CKANTestApp
 import ckan.tests.factories as factories
 
 from ckan import model
@@ -970,11 +971,11 @@ class TestOther(object):
     '''Other tests that relate to authorization.'''
 
     def test_user_login(self, app):
-        """
+        '''
         We have changed the auth method user_show(), so let's test if
         the regular login process still works (by default login redirects to user's
         personal dashboard).
-        """
+        '''
         # make a user
         password = "RandomPassword123"
         user = factories.User(password=password)
@@ -990,3 +991,71 @@ class TestOther(object):
             follow_redirects=True,
         )
 
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestDCATRelated(object):
+    '''Tests that relate to ckanext-dcat.'''
+
+    @pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME} dcat')
+    @pytest.mark.ckan_config('ckanext.dcat.enable_content_negotiation', True)
+    @pytest.mark.parametrize("content_type", ["text/turtle", "application/ld+json"])
+    def test_dataset_turtle_through_conneg_anonymous_allowed(self, app: CKANTestApp, content_type: list):
+        '''
+        Test that anonymous users can access RDF representations of dataset
+        metadata if the DCAT plugin is loaded and `ckanext.dcat.enable_content_negotiation`
+        is True.
+        '''
+        user = factories.User()
+        org = factories.Organization(user=user)
+        dataset = factories.Dataset(owner_org=org['id'])
+        headers = {'Accept': content_type}
+        response = app.get(
+            url=f"/dataset/{dataset['id']}",
+            headers=headers,
+            status=200,
+            follow_redirects=False,
+        )
+        assert content_type in response.content_type
+
+    @pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+    @pytest.mark.ckan_config('ckanext.dcat.enable_content_negotiation', True)
+    @pytest.mark.parametrize("content_type", ["text/turtle", "application/ld+json"])
+    def test_dataset_turtle_through_conneg_anonymous_no_dcat(self, app: CKANTestApp, content_type: list):
+        '''
+        Test that anonymous users cannot access RDF representations of dataset
+        metadata if the DCAT plugin is not loaded. Instead, the standard
+        redirect should happen.
+        '''
+        user = factories.User()
+        org = factories.Organization(user=user)
+        dataset = factories.Dataset(owner_org=org['id'])
+        headers = {'Accept': content_type}
+        response = app.get(
+            url=f"/dataset/{dataset['id']}",
+            headers=headers,
+            status=307,
+            follow_redirects=False,
+        )
+        redirect_location = response.headers['Location']
+        assert redirect_location.endswith('/user/login') 
+
+    @pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME} dcat')
+    @pytest.mark.ckan_config('ckanext.dcat.enable_content_negotiation', False)
+    @pytest.mark.parametrize("content_type", ["text/turtle", "application/ld+json"])
+    def test_dataset_turtle_through_conneg_anonymous_no_conneg_allowed(self, app: CKANTestApp, content_type: list):
+        '''
+        Test that anonymous users cannot access RDF representations of dataset
+        metadata if the DCAT plugin is not loaded. Instead, the standard
+        redirect should happen.
+        '''
+        user = factories.User()
+        org = factories.Organization(user=user)
+        dataset = factories.Dataset(owner_org=org['id'])
+        headers = {'Accept': content_type}
+        response = app.get(
+            url=f"/dataset/{dataset['id']}",
+            headers=headers,
+            status=307,
+            follow_redirects=False,
+        )
+        redirect_location = response.headers['Location']
+        assert redirect_location.endswith('/user/login')

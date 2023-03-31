@@ -50,6 +50,12 @@ class AuthMiddleware(object):
         # dcat dataset endpoint is available to anonymous
         elif re.match(f"^/dataset/.+?\.({'|'.join(ext)})$", environ['PATH_INFO']):
             return self.app(environ,start_response)
+        elif re.match(f"^/dataset/.+?", environ['PATH_INFO']):
+            if config.get('ckanext.dcat.enable_content_negotiation'):
+                if 'dcat' in config['ckan.plugins'].split():
+                    from ckanext.dcat.utils import CONTENT_TYPES
+                    if environ.get('HTTP_ACCEPT') in CONTENT_TYPES.values():
+                        return self.app(environ, start_response)
         # assets (css, js, images) should be accessible to all
         elif environ['PATH_INFO'].startswith(tuple(ASSET_PATHS)):
             return self.app(environ, start_response)
