@@ -11,7 +11,6 @@ import ckan.lib.base as base
 import ckan.model as model
 from ckan.plugins.toolkit import config
 
-
 LOG = logging.getLogger(__name__)
 USER_PROCESS_PAGES = [
     '/user/login',
@@ -39,13 +38,6 @@ class AuthMiddleware(object):
         catalog_endpoints = config.get('ckanext.dcatde_berlin.additional_endpoints', '').split() # dcatde_berlin can add additional endpoints
         catalog_endpoints.append('/catalog')
 
-        # elif re.match('^/dataset/.+?\.(rdf|ttl|jsonld)$', path):
-        #     return {'success': True}
-        # elif path == "/about":
-        #     return {'success': True}
-        # elif path == "/datenschutzerklaerung":
-        #     return {'success': True}
-
         # we putting only UI behind login so API paths should remain accessible
         if environ['PATH_INFO'].startswith('/api/'):
             return self.app(environ,start_response)
@@ -64,27 +56,26 @@ class AuthMiddleware(object):
         # certain public pages should be available to all
         elif environ['PATH_INFO'].startswith(tuple(public_pages())):
             return self.app(environ, start_response)
+        # otherwise only login/reset are accessible
+        elif environ['PATH_INFO'] in USER_PROCESS_PAGES:
+            return self.app(environ, start_response)
+
+        url = environ.get('HTTP_X_FORWARDED_PROTO') \
+            or environ.get('wsgi.url_scheme', 'http')
+        url += '://'
+        if environ.get('HTTP_HOST'):
+            url += environ['HTTP_HOST']
         else:
-            # otherwise only login/reset are accessible
-            if environ['PATH_INFO'] in USER_PROCESS_PAGES:
-                return self.app(environ,start_response)
-            else:
-                url = environ.get('HTTP_X_FORWARDED_PROTO') \
-                    or environ.get('wsgi.url_scheme', 'http')
-                url += '://'
-                if environ.get('HTTP_HOST'):
-                    url += environ['HTTP_HOST']
-                else:
-                    url += environ['SERVER_NAME']
-                url += '/user/login'
-                headers = [
-                    ('Location', url),
-                    ('Content-Length','0'),
-                    ('X-Robots-Tag', 'noindex, nofollow, noarchive')
-                    ]
-                status = '307 Temporary Redirect'
-                start_response(status, headers)
-                return ['']
+            url += environ['SERVER_NAME']
+        url += '/user/login'
+        headers = [
+            ('Location', url),
+            ('Content-Length','0'),
+            ('X-Robots-Tag', 'noindex, nofollow, noarchive')
+            ]
+        status = '307 Temporary Redirect'
+        start_response(status, headers)
+        return ['']
 
     def _get_user_for_apikey(self, environ):
         # Adapted from https://github.com/ckan/ckan/blob/625b51cdb0f1697add59c7e3faf723a48c8e04fd/ckan/lib/base.py#L396

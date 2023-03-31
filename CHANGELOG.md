@@ -2,6 +2,8 @@
 
 ## Development
 
+- Simplify middleware code (fewer conditionals).
+
 ## [0.2.2](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.2)
 
 _(2023-01-23)_
