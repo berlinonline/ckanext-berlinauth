@@ -2,9 +2,13 @@
 
 ## Development
 
+## [0.2.3](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.3)
+
+_(2023-04-05)_
+
 - Enable anonymous access to ckanext-dcat's RDF represesentations through content
   negotiation, not just through file suffixes.
-- Simplify middleware code (fewer conditionals).
+- Simplify middleware code (fewer conditionals, better imports).
 - Fix broken login workflow.
 
 ## [0.2.2](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.2)
