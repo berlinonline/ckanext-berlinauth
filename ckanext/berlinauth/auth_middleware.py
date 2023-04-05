@@ -6,10 +6,9 @@ Based on https://github.com/datopian/ckanext-noanonaccess
 import logging
 import re
 
-import ckan.common as c
 import ckan.lib.base as base
 import ckan.model as model
-from ckan.plugins.toolkit import config
+from ckan.plugins.toolkit import config, asbool
 
 LOG = logging.getLogger(__name__)
 USER_PROCESS_PAGES = [
@@ -23,7 +22,7 @@ ASSET_PATHS = [
 ]
 
 def public_pages():
-    public_paths = c.config.get("berlin.public_pages", "").split()
+    public_paths = config.get("berlin.public_pages", "").split()
     return [f"/{path}" for path in public_paths]
 
 class AuthMiddleware(object):
@@ -51,7 +50,7 @@ class AuthMiddleware(object):
         elif re.match(f"^/dataset/.+?\.({'|'.join(ext)})$", environ['PATH_INFO']):
             return self.app(environ,start_response)
         elif re.match(f"^/dataset/.+?", environ['PATH_INFO']):
-            if config.get('ckanext.dcat.enable_content_negotiation'):
+            if asbool(config.get('ckanext.dcat.enable_content_negotiation')):
                 if 'dcat' in config['ckan.plugins'].split():
                     from ckanext.dcat.utils import CONTENT_TYPES
                     if environ.get('HTTP_ACCEPT') in CONTENT_TYPES.values():
