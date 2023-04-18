@@ -48,7 +48,7 @@ A technical organization is one which does not reflect a real-world organization
 Technical groups are hidden for non-sysadmin users.
 
 ```ini
-berlin.technical_groups = simplesearch harvester-fis-broker harvester-stromnetz-berlin
+berlin.technical_groups = simplesearch harvester-fis-broker
 ```
 
 - `berlin.public_pages`:
