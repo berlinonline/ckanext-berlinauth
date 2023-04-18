@@ -80,7 +80,7 @@ class AuthMiddleware(object):
             ]
         status = '307 Temporary Redirect'
         start_response(status, headers)
-        return ['']
+        return [b'']
 
     def _get_user_for_apikey(self, environ):
         # Adapted from https://github.com/ckan/ckan/blob/625b51cdb0f1697add59c7e3faf723a48c8e04fd/ckan/lib/base.py#L396
