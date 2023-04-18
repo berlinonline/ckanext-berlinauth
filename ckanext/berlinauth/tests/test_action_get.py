@@ -7,13 +7,14 @@ from flask import Flask
 import ckan.common as c
 import ckan.tests.factories as factories
 
-from ckanext.berlinauth.tests import sysadmin, org_with_users
+from ckanext.berlinauth.tests import sysadmin, org_with_users, TECHNORG
 
 flask_app = Flask(__name__)
 PLUGIN_NAME = 'berlinauth'
 LOG = logging.getLogger(__name__)
 
 @pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.ckan_config('berlin.technical_groups', TECHNORG)
 @pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
 class TestOrganizationList(object):
     '''Tests that check authorization for simple get-able API
@@ -43,9 +44,6 @@ class TestOrganizationList(object):
         result = data['result']
         assert technical_name not in [org['name'] for org in result]
 
-    # TODO: skip the following because of CKAN core's missing auth_user_obj bug:
-    # not currently skipped because we temporarily allow organization_list_for_user for anonymous while this bug isn't fixed
-    # @pytest.mark.skip(reason="doesn't work due to bug in CKAN core")
     def test_technical_group_excluded_for_regular(self, app):
         '''Test that organizations specified as 'technical' are not returned by 
            `organization_list` for regular logged-in users.'''
@@ -60,14 +58,6 @@ class TestOrganizationList(object):
             extra_environ = {
                 "Authorization": user['apikey']
             }
-            # response = app.get(
-            #     url=f"/api/3/action/organization_list",
-            #     status=200,
-            #     extra_environ=extra_environ
-            # )
-            # data = json.loads(response.body)
-            # result = data['result']
-            # assert technical_name not in result
 
             response = app.get(
                 url=f"/api/3/action/organization_list",
@@ -104,9 +94,6 @@ class TestOrganizationShow(object):
         # also return the site_user
         assert set(expected_names).issubset(set(member_names))
 
-    # TODO: skip the following because of CKAN core's missing auth_user_obj bug:
-    # not currently skipped because we temporarily allow organization_list_for_user for anonymous while this bug isn't fixed
-    # @pytest.mark.skip(reason="doesn't work due to bug in CKAN core")
     def test_org_admin_can_see_all_members(self, app, org_with_users):
         '''Check that an org's admin can see all of its members.'''
 
@@ -125,9 +112,6 @@ class TestOrganizationShow(object):
         # also return the site_user
         assert set(expected_names).issubset(set(member_names))
 
-    # TODO: skip the following because of CKAN core's missing auth_user_obj bug:
-    # not currently skipped because we temporarily allow organization_list_for_user for anonymous while this bug isn't fixed
-    # @pytest.mark.skip(reason="doesn't work due to bug in CKAN core")
     def test_regular_member_can_only_see_self(self, app, org_with_users):
         '''Check that a regular org member can only see themselves as a member.'''
 

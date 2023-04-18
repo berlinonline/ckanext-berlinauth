@@ -2,6 +2,8 @@
 
 ## Development
 
+- We no longer configure `berlin.technical_groups` in the plugin initialization in, as this can mess with tests that also set this config option via `@pytest.mark.ckan_config()`. Instead, it needs to be set in the ckan config file.
+
 ## [0.2.3](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.3)
 
 _(2023-04-05)_

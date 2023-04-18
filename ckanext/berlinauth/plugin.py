@@ -49,9 +49,6 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
         config['ckan.auth.roles_that_cascade_to_sub_groups'] = 'admin'
         config['ckan.auth.public_activity_stream_detail'] = False
 
-        config['berlin.technical_groups'] = \
-            "simplesearch harvester-fis-broker harvester-stromnetz-berlin"
-
     # -------------------------------------------------------------------
     # Implementation IAuthFunctions
     # -------------------------------------------------------------------

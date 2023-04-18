@@ -13,7 +13,7 @@ import ckan.tests.factories as factories
 
 from ckan import model
 
-from ckanext.berlinauth.tests import sysadmin, org_with_users
+from ckanext.berlinauth.tests import sysadmin, org_with_users, TECHNORG
 
 PLUGIN_NAME = 'berlinauth'
 LOG = logging.getLogger(__name__)
@@ -596,6 +596,7 @@ class TestGroupFunctions(object):
             status=403
         )
 
+    @pytest.mark.ckan_config('berlin.technical_groups', TECHNORG)
     def test_only_sysadmin_see_technical_orgs(self, app, sysadmin):
         '''Check that only sysadmins can see groups (or orgs) that have been defined
            as 'technical'.'''
