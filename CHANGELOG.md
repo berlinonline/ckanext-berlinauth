@@ -2,6 +2,8 @@
 
 ## Development
 
+- Fix error when a registered non-admin user is looking at `/organization` and would see a technical group in the list of orgs (which they are not authorized to see).
+
 ## [0.2.4](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.4)
 
 _(2023-04-18)_

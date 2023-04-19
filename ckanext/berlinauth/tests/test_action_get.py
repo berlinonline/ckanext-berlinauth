@@ -5,6 +5,7 @@ import pytest
 from flask import Flask
 
 import ckan.common as c
+import ckan.plugins.toolkit as toolkit
 import ckan.tests.factories as factories
 
 from ckanext.berlinauth.tests import sysadmin, org_with_users, TECHNORG
@@ -51,7 +52,6 @@ class TestOrganizationList(object):
         technical_name = technical_groups.pop()
         factories.Organization(name='foobar')
         with app.flask_app.app_context():
-            LOG.info("testing... ")
             factories.Organization(name='regular')
             factories.Organization(name=technical_name)
             user = factories.User()
@@ -68,6 +68,23 @@ class TestOrganizationList(object):
             data = json.loads(response.body)
             result = data['result']
             assert technical_name not in [org['name'] for org in result]
+
+    def test_technical_group_excluded_for_regular_in_html(self, app):
+        '''Test that organizations specified as 'technical' are not included in the
+           `/organization`-index (HTML) for regular logged-in users.'''
+        technical_groups = c.config.get("berlin.technical_groups", "").split(" ")
+        technical_name = technical_groups.pop()
+        factories.Organization(name='foobar')
+        factories.Organization(name='regular')
+        factories.Organization(name=technical_name)
+        user = factories.User()
+
+        response = app.get(
+            headers=[("Authorization", user['apikey'])],
+            url=toolkit.url_for('organization.index'),
+            status=200
+        )
+        assert technical_name not in response.body
 
 
 @pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')

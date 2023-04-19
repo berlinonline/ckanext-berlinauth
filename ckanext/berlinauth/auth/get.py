@@ -73,8 +73,9 @@ def group_show(context, data_dict):
     - all: show only groups that are not listed in the
       berlin.technical_groups config
     """
-    LOG.info(f"request path: {c.request.path}")
-    if c.request.path.endswith('/organization_list'):
+    request_path = c.request.path
+    request_path = re.sub('/$', '', request_path) # TODO: use removesuffix() once we're running Python 3.9
+    if request_path.endswith('/organization_list') or request_path.endswith('/organization'):
         # `organization_list?all_fields=True` calls `group_show`.
         # because `group_show` for technical groups is not authorized
         # (see below), this would mean that all such calls to
@@ -82,7 +83,7 @@ def group_show(context, data_dict):
         # a distinction based on the request path is a workaround.
         # Could also be solved in CKAN core (catching NotAuthorized in
         # logic.action.get._group_or_org_list).
-        LOG.info("returning True")
+        # For the same reason we allow access in `/organization`-requests.
         return { 'success': True }
     technical_groups = c.config.get("berlin.technical_groups", "")
     technical_groups = technical_groups.split(" ")
