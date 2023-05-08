@@ -14,7 +14,7 @@ flask_app = Flask(__name__)
 PLUGIN_NAME = 'berlinauth'
 LOG = logging.getLogger(__name__)
 
-@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME} berlintheme')
 @pytest.mark.ckan_config('berlin.technical_groups', TECHNORG)
 @pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
 class TestOrganizationList(object):
