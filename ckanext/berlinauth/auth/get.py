@@ -105,6 +105,7 @@ def task_status_show(context, data_dict):
     }
 
 
+@plugins.toolkit.auth_allow_anonymous_access
 def user_show(context, data_dict):
     """Implementation of ckan.logic.auth.get.user_show
 
@@ -122,7 +123,7 @@ def user_show(context, data_dict):
         return ckanget.user_show(context, data_dict)
 
     requester = context.get('user')
-    requester_looking_at_own_account = requester == user_obj.name
+    requester_looking_at_own_account = (requester == user_obj.id or requester == user_obj.name)
     if requester_looking_at_own_account:
         return { 'success': True }
     else:

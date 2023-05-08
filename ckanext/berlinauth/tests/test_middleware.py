@@ -8,6 +8,8 @@ import pytest
 
 import ckan.common as c
 from ckan.lib import webassets_tools
+from ckan.lib.helpers import url_for
+from ckan.lib.mailer import create_reset_key
 import ckan.logic as logic
 import ckan.tests.factories as factories
 import ckan.tests.helpers as test_helpers
@@ -85,6 +87,62 @@ class TestAnonymousAccess(object):
             url=redirect_location,
             status=200
         )
+
+    def test_reset_link_accessible_for_anonymous(self, app):
+        '''Test that an anonymous user can access a password reset link.'''
+        user = factories.User()
+        user_obj = model.User.get(user['id'])
+        create_reset_key(user_obj)
+        reset_link = url_for(
+            controller="user",
+            action="perform_reset",
+            id=user_obj.id,
+            key=user_obj.reset_key,
+        )
+        app.get(
+            url=reset_link,
+            follow_redirects=False,
+            status=200
+        )
+    
+    def test_reset_link_accessible_for_logged_in(self, app):
+        '''Test that an anonymous user can access a password reset link.'''
+        user = factories.User()
+        user_obj = model.User.get(user['id'])
+        create_reset_key(user_obj)
+        reset_link = url_for(
+            controller="user",
+            action="perform_reset",
+            id=user_obj.id,
+            key=user_obj.reset_key,
+        )
+        app.get(
+            url=reset_link,
+            follow_redirects=False,
+            status=200,
+            extra_environ={
+                "Authorization": user['apikey']
+            }
+        )
+    
+    def test_reset_link_wrong_user_404(self, app):
+        '''Test that an anonymous user gets a 404 when accessing a password reset link
+           for a non-existant user.'''
+        user = factories.User()
+        user_obj = model.User.get(user['id'])
+        create_reset_key(user_obj)
+        reset_link = url_for(
+            controller="user",
+            action="perform_reset",
+            id=user_obj.id[:-1],
+            key=user_obj.reset_key,
+        )
+        app.get(
+            url=reset_link,
+            follow_redirects=False,
+            status=404
+        )
+
 
 @pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME}')
 @pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')

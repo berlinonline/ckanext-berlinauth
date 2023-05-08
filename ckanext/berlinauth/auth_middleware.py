@@ -62,7 +62,7 @@ class AuthMiddleware(object):
         elif environ['PATH_INFO'].startswith(tuple(public_pages())):
             return self.app(environ, start_response)
         # otherwise only login/reset are accessible
-        elif environ['PATH_INFO'] in USER_PROCESS_PAGES:
+        elif environ['PATH_INFO'].startswith(tuple(USER_PROCESS_PAGES)):
             return self.app(environ, start_response)
 
         url = environ.get('HTTP_X_FORWARDED_PROTO') \
