@@ -2,6 +2,10 @@
 
 ## Development
 
+## [0.2.5](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.5)
+
+_(2023-05-08)_
+
 - Fix error when a registered non-admin user is looking at `/organization` and would see a technical group in the list of orgs (which they are not authorized to see).
 - Fix error where password reset links were rejected.
 
