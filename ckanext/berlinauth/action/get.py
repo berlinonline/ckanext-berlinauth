@@ -2,6 +2,7 @@
 """Custom implementations of action functions from ckan.logic.action.get
 """
 
+import importlib
 import logging
 import ckan as ckan
 import ckan.logic.action.get as ckanget
@@ -78,3 +79,30 @@ def organization_show(context, data_dict):
     group_dict = ckanget.organization_show(context, data_dict)
     group_dict = _filter_group_show(context, group_dict)
     return group_dict
+
+
+@ckan.logic.side_effect_free
+def status_show(context, data_dict):
+    '''Return a dictionary with information about the site's configuration.
+
+    :rtype: dictionary
+
+    '''
+
+    def build_ext_dict(ext_name: str)->dict:
+        ext_path = f"ckanext.{ext_name}"
+        extension = importlib.import_module(ext_path)
+        version = "unknown"
+        if hasattr(extension, '__version__'):
+            version = extension.__version__
+        return { "name": ext_name, "version": version }
+
+
+    LOG.info("custom status_show")
+    status_dict = ckanget.status_show(context, data_dict)
+    extensions = status_dict['extensions']
+    LOG.info(f"extensions: {extensions}")
+    extensions = [ build_ext_dict(ext_name) for ext_name in extensions ]
+    LOG.info(f"extended extension: {extensions}")
+    status_dict['extensions'] = extensions
+    return status_dict
