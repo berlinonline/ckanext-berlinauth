@@ -8,6 +8,7 @@ import ckan.common as c
 import ckan.plugins.toolkit as toolkit
 import ckan.tests.factories as factories
 
+import ckanext.berlinauth as berlinauth
 from ckanext.berlinauth.tests import sysadmin, org_with_users, TECHNORG
 
 flask_app = Flask(__name__)
@@ -158,6 +159,27 @@ class TestOrganizationShow(object):
 
         data = json.loads(response.body)
         assert 'users' not in data
-        # have non_admin call `group_show`
-        # check that other_user is not in the returned list of org members
-        # make same test with sysadmin user, check that all members are returned
+
+
+@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME} stats')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
+class TestStatusShow(object):
+
+    def test_status_show_has_versions(self, app, sysadmin):
+        '''Check that the list of extensions returned from status_show includes
+           their version, if available.'''
+
+        response = app.get(
+            url='/api/3/action/status_show',
+            extra_environ={'Authorization': sysadmin['apikey']},
+            status=200
+        )
+
+        data = json.loads(response.body)
+        assert 'extensions' in data['result']
+        extensions = data['result']['extensions']
+        assert type(extensions) is dict
+        assert 'stats' in extensions
+        assert extensions['stats']['version'] == 'unknown'
+        assert PLUGIN_NAME in extensions
+        assert extensions[PLUGIN_NAME]['version'] == berlinauth.__version__
