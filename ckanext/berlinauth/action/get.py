@@ -83,7 +83,10 @@ def organization_show(context, data_dict):
 
 @ckan.logic.side_effect_free
 def status_show(context, data_dict):
-    '''Return a dictionary with information about the site's configuration.
+    '''Implementation of ckan.logic.action.get.status_show
+
+    Replaces the plain list of extensions with a list of dicts that contain
+    the extension's name and version number, based on a __version__ attribute.
 
     :rtype: dictionary
 
@@ -95,14 +98,10 @@ def status_show(context, data_dict):
         version = "unknown"
         if hasattr(extension, '__version__'):
             version = extension.__version__
-        return { "name": ext_name, "version": version }
+        return { "version": version }
 
-
-    LOG.info("custom status_show")
     status_dict = ckanget.status_show(context, data_dict)
     extensions = status_dict['extensions']
-    LOG.info(f"extensions: {extensions}")
-    extensions = [ build_ext_dict(ext_name) for ext_name in extensions ]
-    LOG.info(f"extended extension: {extensions}")
+    extensions = { ext_name: build_ext_dict(ext_name) for ext_name in extensions }
     status_dict['extensions'] = extensions
     return status_dict
