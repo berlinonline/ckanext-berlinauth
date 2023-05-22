@@ -2,6 +2,10 @@
 
 ## Development
 
+## [0.2.6](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.6)
+
+_(2023-05-22)_
+
 - Modify the `status_show` API method to show the loaded extensions' version number, based on an `__version__`-attribute (or `unknown`).
 - Define extension's version string in [VERSION](VERSION), make it available as `ckanext.berlinauth.__version__` and in [setup.py](setup.py).
 
