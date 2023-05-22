@@ -59,6 +59,39 @@ This setting contains a space-separated list of paths that should be visible to 
 berlin.public_pages = about datenschutzerklaerung
 ```
 
+## Version Numbers for Plugins
+
+The CKAN API's [status_show](https://docs.ckan.org/en/2.9/api/#ckan.logic.action.get.status_show) method includes a list of plugins as configured in the `ckan.plugins` setting.
+`ckanext-berlinauth` includes an extended version of `status_show`  that also shows the version number of each plugin.
+This assumes that the plugin module defines a `__version__` attribute that contains the version number.
+If there is no `__version__` attribute, the version number will be `unknown`:
+
+```json
+{
+  "help": "http://ckandev.bln/api/3/action/help_show?name=status_show",
+  "success": true,
+  "result": {
+    "site_title": "Datenregister Dev",
+    "site_description": "",
+    "site_url": "http://ckandev.bln",
+    "ckan_version": "2.9.8",
+    "error_emails_to": null,
+    "locale_default": "en",
+    "extensions": {
+      "stats": {
+        "version": "unknown"
+      },
+      "berlintheme": {
+        "version": "0.3.6"
+      },
+      "berlinauth": {
+        "version": "0.2.6"
+      }
+    }
+  }
+}
+```
+
 ## License
 
 This material is copyright © [BerlinOnline Stadtportal GmbH & Co. KG](https://www.berlinonline.net/).
