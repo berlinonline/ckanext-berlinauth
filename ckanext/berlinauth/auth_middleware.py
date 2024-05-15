@@ -14,11 +14,13 @@ LOG = logging.getLogger(__name__)
 USER_PROCESS_PAGES = [
     '/user/login',
     '/user/reset',
+    '/user/logged_in'
 ]
 ASSET_PATHS = [
     '/webassets',
     '/base',
     '/favicon.ico',
+    '/_debug_toolbar'
 ]
 
 def public_pages():
@@ -28,6 +30,7 @@ def public_pages():
 class AuthMiddleware(object):
     def __init__(self, app, app_conf):
         self.app = app
+
     def __call__(self, environ, start_response):
 
         # List of extensions to be made accessible for dcat
@@ -36,6 +39,7 @@ class AuthMiddleware(object):
         # List of catalog endpoints                                      
         catalog_endpoints = config.get('ckanext.dcatde_berlin.additional_endpoints', '').split() # dcatde_berlin can add additional endpoints
         catalog_endpoints.append('/catalog')
+
 
         # we putting only UI behind login so API paths should remain accessible
         if environ['PATH_INFO'].startswith('/api/'):
