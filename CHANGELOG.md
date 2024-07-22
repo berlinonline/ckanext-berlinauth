@@ -2,6 +2,14 @@
 
 ## Development
 
+## [0.2.7](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.7)
+
+_(2024-07-22)_
+
+- Allow flash messages for displaying errors.
+- Fix github workflow.
+- Allow `_debug_toolbar` asset.
+
 ## [0.2.6](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.6)
 
 _(2023-05-22)_
