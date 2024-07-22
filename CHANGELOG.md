@@ -6,8 +6,9 @@
 
 _(2024-07-19)_
 
-- Allow Flash messages for displaying errors
-- Fix Github Workflow
+- Allow Flash messages for displaying errors.
+- Fix Github Workflow.
+- Allow `_debug_toolbar` asset.
 
 ## [0.2.6](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.6)
 
