@@ -6,6 +6,7 @@ Based on https://github.com/datopian/ckanext-noanonaccess
 import logging
 import re
 
+import ckan.lib.api_token as api_token
 import ckan.lib.base as base
 import ckan.model as model
 from ckan.plugins.toolkit import config, asbool
@@ -86,6 +87,9 @@ class AuthMiddleware(object):
         start_response(status, headers)
         return [b'']
 
+    # TODO: instead of using this hacky function, we should maybe use ckan.views.identify_user()
+    # Problem: it will crash saying there is no application context (Flask)
+    # How do we get one?
     def _get_user_for_apikey(self, environ):
         # Adapted from https://github.com/ckan/ckan/blob/625b51cdb0f1697add59c7e3faf723a48c8e04fd/ckan/lib/base.py#L396
         apikey_header_name = config.get(base.APIKEY_HEADER_NAME_KEY,
@@ -105,4 +109,6 @@ class AuthMiddleware(object):
         # check if API key is valid by comparing against keys of registered users
         query = model.Session.query(model.User)
         user = query.filter_by(apikey=apikey).first()
+        if not user:
+            user = api_token.get_user_from_token(apikey)
         return user
