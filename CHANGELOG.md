@@ -2,6 +2,8 @@
 
 ## Development
 
+- Allow authorization via tokens, in addition to browser cookies and api keys.
+
 ## [0.2.7](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.7)
 
 _(2024-07-22)_
