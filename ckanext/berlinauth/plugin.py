@@ -121,3 +121,8 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
 
     def make_middleware(self, app, config):
         return AuthMiddleware(app, config)
+
+        # from ckan.config.middleware.flask_app import CKANFlask
+        # if isinstance(app, CKANFlask):
+        #     app.wsgi_app = FeedMiddleware(app.wsgi_app)
+        # return app
