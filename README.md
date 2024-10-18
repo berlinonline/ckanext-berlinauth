@@ -94,7 +94,7 @@ If there is no `__version__` attribute, the version number will be `unknown`:
 
 ## License
 
-This material is copyright © [BerlinOnline Stadtportal GmbH & Co. KG](https://www.berlinonline.net/).
+This material is copyright © [BerlinOnline GmbH](https://www.berlinonline.net/).
 
 This extension is open and licensed under the GNU Affero General Public License (AGPL) v3.0.
 Its full text may be found at:

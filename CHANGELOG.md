@@ -3,6 +3,7 @@
 ## Development
 
 - Allow authorization via tokens, in addition to browser cookies and api keys.
+- Update BerlinOnline name.
 
 ## [0.2.7](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.7)
 
