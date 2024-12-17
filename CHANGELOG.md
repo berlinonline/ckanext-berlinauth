@@ -2,7 +2,14 @@
 
 ## Development
 
+## [0.2.8](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.8)
+
+_(2024-12-17)_
+
 - Allow authorization via tokens, in addition to browser cookies and api keys.
+- Update BerlinOnline name.
+- Fix failing CI/CD
+- Add publiccode.yml for OpenCode
 
 ## [0.2.7](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.7)
 
