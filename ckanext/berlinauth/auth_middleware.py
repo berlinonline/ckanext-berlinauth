@@ -21,7 +21,9 @@ ASSET_PATHS = [
     '/webassets',
     '/base',
     '/favicon.ico',
-    '/_debug_toolbar'
+    '/_debug_toolbar',
+    '/images',
+    '/robots.txt',
 ]
 
 def public_pages():
