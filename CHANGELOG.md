@@ -2,6 +2,10 @@
 
 ## Development
 
+## [0.2.9](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.9)
+
+_(2025-05-22)_
+
 - Do not crash on `ModuleNotFoundError` when listing plugin versions in `status_show()`. Instead give version as "unknown" and indicate error in JSON output.
 - Add `/images` to asset paths that are allowed for anonymous users (otherwise the logo cannot be shown).
 - Allow access to `robots.txt` for anymous users.
