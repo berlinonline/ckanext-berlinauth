@@ -2,6 +2,8 @@
 
 ## Development
 
+- Do not crash on `ModuleNotFoundError` when listing plugin versions in `status_show()`. Instead give version as "unknown" and indicate error in JSON output.
+
 ## [0.2.8](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.8)
 
 _(2024-12-17)_

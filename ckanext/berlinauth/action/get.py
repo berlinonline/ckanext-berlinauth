@@ -93,9 +93,14 @@ def status_show(context, data_dict):
     '''
 
     def build_ext_dict(ext_name: str)->dict:
+        import traceback
         ext_path = f"ckanext.{ext_name}"
-        extension = importlib.import_module(ext_path)
         version = "unknown"
+        try:
+            extension = importlib.import_module(ext_path)
+        except ModuleNotFoundError as e:
+            LOG.error(traceback.format_exc())
+            return { "version": version, "error": e.__class__.__name__ }
         if hasattr(extension, '__version__'):
             version = extension.__version__
         return { "version": version }
