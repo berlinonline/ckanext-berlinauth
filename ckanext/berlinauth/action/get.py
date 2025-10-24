@@ -2,12 +2,13 @@
 """Custom implementations of action functions from ckan.logic.action.get
 """
 
-import importlib
+import importlib.metadata as md
 import logging
 import ckan as ckan
 import ckan.logic.action.get as ckanget
 import ckan.common as c
 from ckan.plugins.toolkit import asbool
+
 
 LOG = logging.getLogger(__name__)
 
@@ -94,16 +95,17 @@ def status_show(context, data_dict):
 
     def build_ext_dict(ext_name: str)->dict:
         import traceback
-        ext_path = f"ckanext.{ext_name}"
         version = "unknown"
         try:
-            extension = importlib.import_module(ext_path)
+            meta = md.metadata(f'ckanext-{ext_name}')
+            version = md.version(f'ckanext-{ext_name}')
         except ModuleNotFoundError as e:
             LOG.error(traceback.format_exc())
             return { "version": version, "error": e.__class__.__name__ }
-        if hasattr(extension, '__version__'):
-            version = extension.__version__
-        return { "version": version }
+        # if hasattr(extension, '__version__'):
+        #     version = extension.__version__
+        url = meta['Home-page']
+        return { 'version': version, 'url': url }
 
     status_dict = ckanget.status_show(context, data_dict)
     extensions = status_dict['extensions']
