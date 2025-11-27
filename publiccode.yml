@@ -7,7 +7,7 @@ name: ckanext-berlinauth
 applicationSuite: CKAN
 url: 'https://github.com/berlinonline/ckanext-berlinauth'
 releaseDate: '2020-07-28'
-softwareVersion: 0.2.8
+softwareVersion: 0.2.10
 developmentStatus: stable
 softwareType: addon
 platforms:

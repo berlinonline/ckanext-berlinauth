@@ -1,6 +1,14 @@
 # Changelog
 
 ## Development
+## [0.2.10](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.10)
+
+_(2025-11-27)_
+
+- Add an admin ad `/ckan-admin/versions` to display a list of plugin versions based on our custom `status_show` implementation.
+- Use the more generic `importlib.metadata` approach do determine an extension's version (and url) instead of directly reading the `VERSION` file. This should now work with all extensions.
+- Set env variables for database and Solr index in scripts for running unit tests locally.
+- Fix failing Github CI (install curl).
 
 ## [0.2.9](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.9)
 
