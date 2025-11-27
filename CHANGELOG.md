@@ -1,6 +1,12 @@
 # Changelog
 
 ## Development
+## [0.2.11](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.11)
+
+_(2025-11-27)_
+
+- add __init__ file
+
 ## [0.2.10](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.10)
 
 _(2025-11-27)_
