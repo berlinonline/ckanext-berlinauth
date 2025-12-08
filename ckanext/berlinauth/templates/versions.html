@@ -1,5 +1,9 @@
 {% extends "admin/base.html" %}
 
+{% block content_primary_nav %}
+    {{ super() }}
+{% endblock %}
+
 {% block primary_content_inner %}
     <table class="table table-striped table-bordered table-condensed">
         <thead>
@@ -30,14 +34,4 @@
 {% endblock primary_content_inner%}
 
 {% block secondary_content %}
-  <div class="module module-narrow module-shallow">
-    <h2 class="module-heading">
-      <i class="fa fa-info-circle"></i>
-      {{ _('Versions') }}
-    </h2>
-    <div class="module-content">
-        {% block admin_form_help %}
-        {% endblock admin_form_help %}
-    </div>
-  </div>
 {% endblock secondary_content %}
