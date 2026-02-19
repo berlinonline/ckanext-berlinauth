@@ -1,0 +1,16 @@
+{% ckan_extends %}
+
+{{ super() }}
+
+{% block content_primary_nav %}
+    {% 
+    set tabs = [ 
+        { "active": h.berlintheme_link_active('admin.index'), "label": _('Sysadmins'), "link": url_for('admin.index'), "icon": "wrench" },
+        { "active": h.berlintheme_link_active('admin.config'), "label": _('Config'), "link": url_for('admin.config'), "icon": "check" },
+        { "active": h.berlintheme_link_active('admin.trash'), "label": _('Trash'), "link": url_for('admin.trash'), "icon": "trash" },
+        { "active": h.berlintheme_link_active('versions_blueprint.versions'), "label": _('Versions'), "link": url_for('versions_blueprint.versions'), "icon": "bars" },
+    ] 
+    %}
+    {% snippet 'snippets/tabs.html', tabs=tabs %}
+
+{% endblock %}
