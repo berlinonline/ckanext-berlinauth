@@ -1,6 +1,12 @@
 # Changelog
 
 ## Development
+## [0.3.0](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.3.0)
+
+_(2026-02-19)_
+
+- Styleguide changes
+
 ## [0.2.11](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.11)
 
 _(2025-11-27)_
