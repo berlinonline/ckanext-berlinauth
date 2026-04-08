@@ -1,17 +1,24 @@
 # Changelog
 
 ## Development
+
+## [0.4.0](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.4.0)
+
+_(2026-04-08)_
+
+- Move custom `get.status_show()` API method and versions admin tab template to [ckanext-berlintheme](https://github.com/berlinonline/ckanext-berlintheme).
+
 ## [0.3.0](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.3.0)
 
 _(2026-02-19)_
 
-- Styleguide changes
+- Changes for [Designsystem Berlin.de](https://designsystem.berlin.de).
 
 ## [0.2.11](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.11)
 
 _(2025-11-27)_
 
-- add __init__ file
+- Add __init__ file.
 
 ## [0.2.10](https://github.com/berlinonline/ckanext-berlinauth/releases/tag/0.2.10)
 
