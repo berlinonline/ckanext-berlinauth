@@ -11,7 +11,6 @@ import ckanext.berlinauth.auth.get as auth_get
 import ckanext.berlinauth.auth.create as auth_create
 import ckanext.berlinauth.auth.update as auth_update
 import ckanext.berlinauth.action.get as action_get
-from ckanext.berlinauth.blueprints.versions_blueprint import versions_blueprint
 
 from ckanext.berlinauth.auth_middleware import AuthMiddleware
 
@@ -25,7 +24,6 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IAuthFunctions)
     plugins.implements(plugins.IActions)
     plugins.implements(plugins.IMiddleware, inherit=True)
-    plugins.implements(plugins.IBlueprint)
 
     # -------------------------------------------------------------------
     # Implementation IConfigurer
@@ -51,17 +49,6 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
         config['ckan.auth.allow_dataset_collaborators'] = True
         config['ckan.auth.roles_that_cascade_to_sub_groups'] = 'admin'
         config['ckan.auth.public_activity_stream_detail'] = False
-
-
-        # overriding configuration fields:
-        # set our local template and resource overrides
-        toolkit.add_template_directory(config, 'templates')
-        toolkit.add_ckan_admin_tab(config, 'versions_blueprint.versions', "Versions", icon='list')
-
-    # IBlueprint
-
-    def get_blueprint(self):
-        return [versions_blueprint]
 
     # -------------------------------------------------------------------
     # Implementation IAuthFunctions
@@ -126,7 +113,6 @@ class BerlinauthPlugin(plugins.SingletonPlugin):
             'group_show': action_get.group_show ,
             'organization_show': action_get.organization_show ,
             'organization_list': action_get.organization_list ,
-            'status_show': action_get.status_show ,
         }
 
     # -------------------------------------------------------------------

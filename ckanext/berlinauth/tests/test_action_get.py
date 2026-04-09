@@ -160,26 +160,3 @@ class TestOrganizationShow(object):
         data = json.loads(response.body)
         assert 'users' not in data
 
-
-@pytest.mark.ckan_config('ckan.plugins', f'{PLUGIN_NAME} stats')
-@pytest.mark.usefixtures('clean_db', 'clean_index', 'with_plugins')
-class TestStatusShow(object):
-
-    def test_status_show_has_versions(self, app, sysadmin):
-        '''Check that the list of extensions returned from status_show includes
-           their version, if available.'''
-
-        response = app.get(
-            url='/api/3/action/status_show',
-            extra_environ={'Authorization': sysadmin['apikey']},
-            status=200
-        )
-
-        data = json.loads(response.body)
-        assert 'extensions' in data['result']
-        extensions = data['result']['extensions']
-        assert type(extensions) is dict
-        assert 'stats' in extensions
-        assert extensions['stats']['version'] == 'unknown'
-        assert PLUGIN_NAME in extensions
-        assert extensions[PLUGIN_NAME]['version'] == berlinauth.__version__

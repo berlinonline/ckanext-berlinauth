@@ -2,7 +2,6 @@
 """Custom implementations of action functions from ckan.logic.action.get
 """
 
-import importlib.metadata as md
 import logging
 import ckan as ckan
 import ckan.logic.action.get as ckanget
@@ -82,33 +81,3 @@ def organization_show(context, data_dict):
     return group_dict
 
 
-@ckan.logic.side_effect_free
-def status_show(context, data_dict):
-    '''Implementation of ckan.logic.action.get.status_show
-
-    Replaces the plain list of extensions with a list of dicts that contain
-    the extension's name and version number, based on a __version__ attribute.
-
-    :rtype: dictionary
-
-    '''
-
-    def build_ext_dict(ext_name: str)->dict:
-        import traceback
-        version = "unknown"
-        try:
-            meta = md.metadata(f'ckanext-{ext_name}')
-            version = md.version(f'ckanext-{ext_name}')
-        except ModuleNotFoundError as e:
-            LOG.error(traceback.format_exc())
-            return { "version": version, "error": e.__class__.__name__ }
-        # if hasattr(extension, '__version__'):
-        #     version = extension.__version__
-        url = meta['Home-page']
-        return { 'version': version, 'url': url }
-
-    status_dict = ckanget.status_show(context, data_dict)
-    extensions = status_dict['extensions']
-    extensions = { ext_name: build_ext_dict(ext_name) for ext_name in extensions }
-    status_dict['extensions'] = extensions
-    return status_dict
